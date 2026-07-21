@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IIR Sales Agent — Agente de vendas com IA no WhatsApp, integrado ao seu CRM</title>
+<meta name="description" content="Atendimento comercial no WhatsApp que responde em segundos, qualifica cada lead e registra tudo no CRM. Implementação sob medida para empresas com alto volume de leads.">
+<meta name="theme-color" content="#050B12">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="IIR Sales Agent — seu comercial responde em segundos, 24h por dia">
+<meta property="og:description" content="Agente de vendas com IA no WhatsApp, integrado ao CRM. Implementação sob medida para empresas de médio e grande porte.">
+<meta property="og:locale" content="pt_BR">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     META PIXEL  —  SUBSTITUIR 'SEU_PIXEL_ID_AQUI' PELO ID REAL
+     Remova o comentário abaixo para ativar o rastreamento.
+     ============================================================
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'SEU_PIXEL_ID_AQUI');   // <<<<<< ID DO META PIXEL AQUI
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=SEU_PIXEL_ID_AQUI&ev=PageView&noscript=1"/></noscript>
+     ============================================================ -->
+
+<!-- ============================================================
+     GOOGLE TAG (gtag.js) — SUBSTITUIR 'AW-XXXXXXXXX' PELO ID REAL
+     Use o ID de conversão do Google Ads (AW-) e/ou o ID do GA4 (G-).
+     ============================================================
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-XXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-XXXXXXXXX');   // <<<<<< ID DO GOOGLE ADS AQUI
+  gtag('config', 'G-XXXXXXXXXX');   // <<<<<< ID DO GA4 AQUI (opcional)
+</script>
+     ============================================================ -->
+
+<!-- ============================================================
+     GOOGLE TAG MANAGER — SUBSTITUIR 'GTM-XXXXXXX' PELO ID REAL
+     Alternativa ao gtag.js acima. Use um OU outro, não os dois.
+     ============================================================
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+     ============================================================ -->
+
+<!-- flag de JS ativo: habilita as animações de reveal sem risco de
+     deixar conteúdo invisível caso o script não execute -->
+<script>document.documentElement.className += ' js';</script>
+
+<style>
+/* ==========================================================================
+   IIR LABS DESIGN SYSTEM 2.0 — TOKENS
+   Replicados fielmente de tokens/colors.css, typography.css, spacing.css,
+   effects.css e base.css
+   ========================================================================== */
+:root{
+  /* --- brand core --- */
+  --iir-cyan-500:#2DDCEB;
+  --iir-blue-600:#1296D4;
+  --iir-navy-900:#0A1B2A;
+  --iir-black-950:#050B12;
+  --iir-fog-300:#AAB7C4;
+  --iir-white:#F8FAFC;
+  --brand-gradient:linear-gradient(135deg,var(--iir-cyan-500),var(--iir-blue-600));
+
+  /* --- surfaces --- */
+  --color-bg-canvas:var(--iir-black-950);
+  --color-bg-surface:var(--iir-navy-900);
+  --color-bg-surface-raised:#0F2438;
+  --color-bg-inset:#081420;
+
+  /* --- borders --- */
+  --color-border-subtle:rgba(170,183,196,0.16);
+  --color-border-default:rgba(170,183,196,0.28);
+  --color-border-strong:rgba(170,183,196,0.44);
+
+  /* --- text --- */
+  --color-text-primary:var(--iir-white);
+  --color-text-secondary:var(--iir-fog-300);
+  --color-text-tertiary:rgba(170,183,196,0.62);
+  --color-text-on-accent:var(--iir-black-950);
+  --color-text-link:var(--iir-cyan-500);
+  --color-text-link-hover:#7CEBF5;
+
+  /* --- accent + status --- */
+  --color-accent-primary:var(--iir-cyan-500);
+  --color-accent-secondary:var(--iir-blue-600);
+  --color-success:#2ED9A3;
+  --color-warning:#F2B94C;
+  --color-danger:#F0546A;
+  --color-focus-ring:rgba(45,220,235,0.45);
+
+  /* --- glow washes / robotic signal --- */
+  --cyan-glow:rgba(45,220,235,0.15);
+  --cyan-glow-strong:rgba(45,220,235,0.40);
+  --cyan-glow-soft:rgba(45,220,235,0.06);
+  --cyan-tint:rgba(18,150,212,0.14);
+  --cyan-tint-border:rgba(45,220,235,0.30);
+  --grid-line:rgba(45,220,235,0.05);
+
+  /* --- signature gradients --- */
+  --gradient-bar:linear-gradient(90deg,var(--iir-blue-600) 0%,var(--iir-cyan-500) 100%);
+  --gradient-text:linear-gradient(120deg,#7CEBF5 0%,var(--iir-cyan-500) 60%);
+  --gradient-orb:radial-gradient(circle,rgba(45,220,235,0.16) 0%,transparent 70%);
+
+  /* --- typography --- */
+  --font-sans:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --font-display:'Manrope',-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'Space Mono','Courier New',monospace;
+  --font-data:'JetBrains Mono','Space Mono',monospace;
+  --fw-extralight:200;--fw-light:300;--fw-regular:400;--fw-medium:500;
+  --fw-semibold:600;--fw-bold:700;--fw-extrabold:800;
+  --text-display-xl:4.5rem;--text-display-l:3.375rem;--text-display-m:2.5rem;
+  --text-heading-l:1.875rem;--text-heading-m:1.5rem;--text-heading-s:1.25rem;
+  --text-body-l:1.125rem;--text-body-m:1rem;--text-body-s:0.875rem;
+  --text-caption:0.75rem;--text-overline:0.6875rem;--text-2xs:0.625rem;
+  --lh-tight:1.1;--lh-heading:1.25;--lh-body:1.55;--lh-loose:1.7;
+  --ls-tight:-0.02em;--ls-normal:0em;--ls-wide:0.06em;--ls-wider:0.16em;--ls-widest:0.2em;
+
+  /* --- spacing / radius --- */
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;
+  --space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;--space-16:64px;
+  --space-20:80px;--space-24:96px;--space-32:128px;
+  --radius-s:6px;--radius-m:10px;--radius-l:16px;--radius-xl:24px;--radius-pill:999px;
+  --container-max:1200px;
+
+  /* --- effects --- */
+  --shadow-s:0 1px 2px rgba(0,0,0,0.4);
+  --shadow-m:0 4px 16px rgba(0,0,0,0.36);
+  --shadow-l:0 12px 32px rgba(0,0,0,0.44);
+  --shadow-glow-cyan:0 0 0 1px rgba(45,220,235,0.35),0 0 24px rgba(45,220,235,0.22);
+  --glow-sm:0 0 16px var(--cyan-glow);
+  --glow-md:0 0 24px var(--cyan-glow);
+  --glow-lg:0 0 40px var(--cyan-glow-strong);
+  --glow-dot:0 0 12px var(--iir-cyan-500);
+  --glow-focus:0 0 0 3px var(--color-focus-ring);
+  --accent-bar:3px;
+  --grid-size:48px;
+  --grid-bg:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  --blur-nav:blur(10px);
+  --blur-glass:blur(16px);
+  --hover-lift:translateY(-2px);
+  --ease-standard:cubic-bezier(.22,.61,.36,1);
+  --duration-fast:120ms;--duration-base:200ms;--duration-slow:340ms;
+
+  /* --- section rhythm (mobile first) --- */
+  --section-y:var(--space-20);
+  --gutter:var(--space-5);
+}
+@media (min-width:768px){ :root{ --section-y:var(--space-24); --gutter:var(--space-8); } }
+@media (min-width:1100px){ :root{ --section-y:var(--space-32); --gutter:var(--space-10); } }
+
+/* ==========================================================================
+   RESET + BASE
+   ========================================================================== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:88px;}
+body{
+  font-family:var(--font-sans);
+  font-size:var(--text-body-m);
+  line-height:var(--lh-body);
+  font-weight:var(--fw-regular);
+  color:var(--color-text-secondary);
+  background:var(--color-bg-canvas);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+img,svg{display:block;max-width:100%;}
+button,input,select,textarea{font:inherit;color:inherit;}
+a{color:var(--color-text-link);text-decoration:none;transition:color var(--duration-base) var(--ease-standard);}
+a:hover{color:var(--color-text-link-hover);}
+::selection{background:var(--color-accent-primary);color:var(--color-text-on-accent);}
+h1,h2,h3,h4{color:var(--color-text-primary);font-weight:var(--fw-bold);line-height:var(--lh-heading);letter-spacing:var(--ls-tight);}
+:focus-visible{outline:none;box-shadow:var(--glow-focus);border-radius:var(--radius-s);}
+
+/* --- grain: finish sutil sobre o canvas escuro (4%) --- */
+body::after{
+  content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   LAYOUT PRIMITIVES
+   ========================================================================== */
+.container{width:100%;max-width:var(--container-max);margin-inline:auto;padding-inline:var(--gutter);}
+.section{padding-block:var(--section-y);position:relative;}
+.grid-bg{background-image:var(--grid-bg);background-size:var(--grid-size) var(--grid-size);}
+.orb{position:absolute;border-radius:50%;background:var(--gradient-orb);pointer-events:none;z-index:0;filter:blur(20px);}
+
+/* --- eyebrow (assinatura da marca) --- */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:var(--space-3);
+  font-family:var(--font-mono);font-size:var(--text-caption);
+  letter-spacing:var(--ls-widest);text-transform:uppercase;
+  color:var(--color-accent-primary);margin-bottom:var(--space-5);
+}
+.eyebrow::before{content:'';width:30px;height:1px;background:currentColor;flex-shrink:0;}
+.eyebrow--center::after{content:'';width:30px;height:1px;background:currentColor;flex-shrink:0;}
+
+.section-head{max-width:720px;margin-bottom:var(--space-16);}
+.section-head--center{margin-inline:auto;text-align:center;}
+.section-head--center .eyebrow{justify-content:center;}
+.section-title{
+  font-size:clamp(1.875rem,1.2rem + 3vw,var(--text-display-m));
+  font-weight:var(--fw-extrabold);margin-bottom:var(--space-5);
+}
+.section-lead{font-size:var(--text-body-l);color:var(--color-text-secondary);max-width:60ch;}
+.section-head--center .section-lead{margin-inline:auto;}
+
+.accent{
+  background:var(--gradient-text);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+
+/* ==========================================================================
+   BOTÕES — DS: primary = brand-gradient, radius-m, hover brightness 1.08,
+   active scale .97
+   ========================================================================== */
+.btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+  font-family:var(--font-sans);font-weight:var(--fw-semibold);font-size:var(--text-body-m);
+  padding:14px 26px;border-radius:var(--radius-m);border:1px solid transparent;cursor:pointer;
+  text-align:center;white-space:nowrap;
+  transition:filter var(--duration-base) var(--ease-standard),
+             transform var(--duration-fast) var(--ease-standard),
+             border-color var(--duration-base) var(--ease-standard),
+             box-shadow var(--duration-base) var(--ease-standard);
+  will-change:transform;
+}
+.btn:hover{filter:brightness(1.08);}
+.btn:active{transform:scale(.97);opacity:.9;}
+.btn--primary{background:var(--brand-gradient);color:var(--color-text-on-accent);box-shadow:var(--glow-sm);}
+.btn--primary:hover{box-shadow:var(--glow-lg);}
+.btn--secondary{background:var(--color-bg-surface-raised);color:var(--color-text-primary);border-color:var(--color-border-default);}
+.btn--secondary:hover{border-color:var(--color-border-strong);}
+.btn--ghost{background:transparent;color:var(--color-text-primary);border-color:var(--color-border-subtle);}
+.btn--ghost:hover{border-color:var(--color-border-default);}
+.btn--s{padding:9px 16px;font-size:var(--text-body-s);}
+.btn--block{width:100%;}
+.btn--lg{padding:17px 34px;font-size:var(--text-body-l);}
+.btn__inner{display:inline-flex;align-items:center;gap:var(--space-2);will-change:transform;}
+
+/* ==========================================================================
+   NAV
+   ========================================================================== */
+.nav{
+  position:fixed;inset:0 0 auto 0;z-index:100;
+  border-bottom:1px solid transparent;
+  transition:background var(--duration-base) var(--ease-standard),
+             border-color var(--duration-base) var(--ease-standard),
+             backdrop-filter var(--duration-base);
+}
+.nav.is-stuck{
+  background:rgba(5,11,18,.82);backdrop-filter:var(--blur-nav);-webkit-backdrop-filter:var(--blur-nav);
+  border-bottom-color:var(--color-border-subtle);
+}
+.nav__inner{display:flex;align-items:center;justify-content:space-between;gap:var(--space-6);height:72px;}
+.logo{display:flex;align-items:center;gap:var(--space-3);flex-shrink:0;}
+.logo__mark{width:32px;height:32px;flex-shrink:0;}
+.logo__text{display:flex;flex-direction:column;line-height:1;}
+.logo__name{
+  font-weight:var(--fw-extrabold);font-size:var(--text-body-m);color:var(--color-text-primary);
+  letter-spacing:var(--ls-tight);
+}
+.logo__sub{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wider);
+  text-transform:uppercase;color:var(--color-text-tertiary);margin-top:3px;
+}
+.nav__links{display:none;align-items:center;gap:var(--space-8);}
+.nav__link{
+  font-size:var(--text-body-s);font-weight:var(--fw-medium);color:var(--color-text-secondary);
+  position:relative;padding-block:var(--space-2);
+}
+.nav__link::after{
+  content:'';position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--color-accent-primary);
+  transition:width var(--duration-base) var(--ease-standard);
+}
+.nav__link:hover{color:var(--color-text-primary);}
+.nav__link:hover::after{width:100%;}
+.nav__cta{display:none;}
+@media (min-width:960px){
+  .nav__links{display:flex;}
+  .nav__cta{display:inline-flex;}
+}
+/* menu mobile */
+.nav__toggle{
+  display:inline-flex;flex-direction:column;justify-content:center;gap:5px;
+  width:44px;height:44px;padding:0 11px;background:transparent;border:1px solid var(--color-border-subtle);
+  border-radius:var(--radius-s);cursor:pointer;
+}
+.nav__toggle span{display:block;height:1.5px;background:var(--color-text-primary);transition:transform var(--duration-base) var(--ease-standard),opacity var(--duration-fast);}
+.nav__toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.nav__toggle[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.nav__toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+@media (min-width:960px){.nav__toggle{display:none;}}
+.nav__mobile{
+  display:grid;grid-template-rows:0fr;overflow:hidden;
+  background:rgba(5,11,18,.96);backdrop-filter:var(--blur-nav);-webkit-backdrop-filter:var(--blur-nav);
+  border-bottom:1px solid transparent;
+  transition:grid-template-rows var(--duration-slow) var(--ease-standard),border-color var(--duration-base);
+}
+.nav__mobile.is-open{grid-template-rows:1fr;border-bottom-color:var(--color-border-subtle);}
+.nav__mobile-inner{min-height:0;overflow:hidden;}
+.nav__mobile-list{display:flex;flex-direction:column;gap:var(--space-1);padding:var(--space-4) var(--gutter) var(--space-8);}
+.nav__mobile-list a{
+  color:var(--color-text-secondary);font-size:var(--text-body-m);font-weight:var(--fw-medium);
+  padding-block:var(--space-4);border-bottom:1px solid var(--color-border-subtle);
+}
+.nav__mobile-list a:hover{color:var(--color-text-primary);}
+.nav__mobile-list .btn{margin-top:var(--space-6);}
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+.hero{position:relative;padding-top:calc(72px + var(--space-16));padding-bottom:var(--space-20);overflow:hidden;}
+@media (min-width:768px){.hero{padding-top:calc(72px + var(--space-20));padding-bottom:var(--section-y);}}
+.hero__bg{position:absolute;inset:0;z-index:0;background-image:var(--grid-bg);background-size:var(--grid-size) var(--grid-size);
+  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 20%,transparent 75%);
+          mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 20%,transparent 75%);}
+.hero .orb--a{width:min(780px,120vw);height:min(780px,120vw);top:-380px;right:-260px;}
+.hero .orb--b{width:min(560px,100vw);height:min(560px,100vw);bottom:-320px;left:-240px;opacity:.6;}
+.hero__inner{position:relative;z-index:1;display:grid;gap:var(--space-16);align-items:center;}
+@media (min-width:1024px){
+  .hero__inner{grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);gap:var(--space-12);}
+}
+@media (min-width:1280px){
+  .hero__inner{gap:var(--space-16);}
+}
+.hero__title{
+  font-size:clamp(2.125rem,1.5rem + 2.6vw,3rem);
+  font-weight:var(--fw-extrabold);line-height:var(--lh-tight);letter-spacing:var(--ls-tight);
+  margin-bottom:var(--space-6);
+}
+.hero__lead{font-size:var(--text-body-l);max-width:56ch;margin-bottom:var(--space-8);line-height:var(--lh-body);}
+.hero__actions{display:flex;flex-wrap:wrap;gap:var(--space-4);align-items:center;}
+.hero__note{
+  display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-8);
+  font-family:var(--font-mono);font-size:var(--text-caption);color:var(--color-text-tertiary);
+  letter-spacing:var(--ls-wide);
+}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--color-success);box-shadow:0 0 12px var(--color-success);flex-shrink:0;animation:pulse 2.4s var(--ease-standard) infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+/* --- pill de status no topo do hero --- */
+.hero__badge{
+  display:inline-flex;align-items:center;gap:var(--space-3);
+  padding:7px 16px 7px 12px;border-radius:var(--radius-pill);
+  background:var(--cyan-tint);border:1px solid var(--cyan-tint-border);
+  font-family:var(--font-mono);font-size:var(--text-caption);letter-spacing:var(--ls-wide);
+  color:var(--color-accent-primary);margin-bottom:var(--space-6);text-transform:uppercase;
+}
+
+/* ==========================================================================
+   MOCKUP WHATSAPP
+   ========================================================================== */
+.phone{
+  position:relative;width:100%;max-width:390px;margin-inline:auto;
+  background:var(--color-bg-surface);border:1px solid var(--color-border-default);
+  border-radius:var(--radius-xl);padding:var(--space-3);
+  box-shadow:var(--shadow-l),0 0 60px rgba(45,220,235,.10);
+}
+.phone__screen{background:var(--color-bg-inset);border-radius:var(--radius-l);overflow:hidden;}
+.phone__bar{
+  display:flex;align-items:center;gap:var(--space-3);padding:var(--space-4);
+  background:var(--color-bg-surface-raised);border-bottom:1px solid var(--color-border-subtle);
+}
+.phone__avatar{
+  width:36px;height:36px;border-radius:50%;background:var(--brand-gradient);flex-shrink:0;
+  display:grid;place-items:center;font-family:var(--font-mono);font-size:var(--text-caption);
+  font-weight:var(--fw-bold);color:var(--color-text-on-accent);
+}
+.phone__who{flex:1;min-width:0;}
+.phone__name{font-size:var(--text-body-s);font-weight:var(--fw-semibold);color:var(--color-text-primary);}
+.phone__status{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--color-success);letter-spacing:var(--ls-wide);}
+.phone__body{
+  height:440px;padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3);
+  overflow:hidden;justify-content:flex-end;
+  /* mensagens que saem por cima desaparecem em fade, sem corte seco */
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 12%);
+          mask-image:linear-gradient(180deg,transparent 0,#000 12%);
+}
+.msg{
+  max-width:82%;padding:10px 13px;border-radius:var(--radius-m);font-size:var(--text-body-s);
+  line-height:1.45;opacity:0;transform:translateY(8px);
+  transition:opacity var(--duration-slow) var(--ease-standard),transform var(--duration-slow) var(--ease-standard);
+}
+.msg.is-in{opacity:1;transform:translateY(0);}
+.msg--in{align-self:flex-start;background:var(--color-bg-surface-raised);color:var(--color-text-secondary);border:1px solid var(--color-border-subtle);border-bottom-left-radius:var(--radius-s);}
+.msg--out{align-self:flex-end;background:var(--cyan-tint);border:1px solid var(--cyan-tint-border);color:var(--color-text-primary);border-bottom-right-radius:var(--radius-s);}
+.msg__meta{display:block;font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--color-text-tertiary);margin-top:6px;letter-spacing:var(--ls-wide);}
+.typing{
+  align-self:flex-start;display:flex;gap:4px;padding:12px 14px;border-radius:var(--radius-m);
+  background:var(--color-bg-surface-raised);border:1px solid var(--color-border-subtle);
+  opacity:0;transform:translateY(8px);transition:opacity var(--duration-base),transform var(--duration-base);
+}
+.typing.is-in{opacity:1;transform:translateY(0);}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--color-text-tertiary);animation:blink 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.18s;}
+.typing span:nth-child(3){animation-delay:.36s;}
+@keyframes blink{0%,60%,100%{opacity:.25;transform:translateY(0);}30%{opacity:1;transform:translateY(-3px);}}
+
+/* card de CRM flutuante sobre o phone */
+.crm-toast{
+  position:absolute;right:-14px;bottom:64px;z-index:2;width:238px;
+  background:var(--color-bg-surface-raised);border:1px solid var(--cyan-tint-border);
+  border-radius:var(--radius-m);padding:var(--space-4);box-shadow:var(--shadow-l),var(--glow-md);
+  opacity:0;transform:translateY(10px);
+  transition:opacity var(--duration-slow) var(--ease-standard),transform var(--duration-slow) var(--ease-standard);
+}
+.crm-toast.is-in{opacity:1;transform:translateY(0);}
+@media (max-width:520px){.crm-toast{right:-6px;width:210px;}}
+.crm-toast__label{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wider);
+  text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:var(--space-2);
+}
+.crm-toast__row{display:flex;align-items:center;gap:var(--space-2);font-size:var(--text-body-s);color:var(--color-text-primary);font-weight:var(--fw-semibold);}
+.crm-toast__stage{
+  display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-3);
+  font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--color-text-tertiary);
+}
+.crm-toast__chip{
+  padding:3px 9px;border-radius:var(--radius-pill);background:rgba(46,217,163,.14);
+  border:1px solid rgba(46,217,163,.32);color:var(--color-success);font-weight:var(--fw-bold);
+}
+.crm-toast__arrow{color:var(--color-accent-primary);}
+
+/* ==========================================================================
+   TICKER / PROVA SOCIAL
+   ========================================================================== */
+.proof{border-block:1px solid var(--color-border-subtle);background:var(--color-bg-surface);padding-block:var(--space-12);position:relative;overflow:hidden;}
+.proof__label{
+  text-align:center;font-family:var(--font-mono);font-size:var(--text-2xs);
+  letter-spacing:var(--ls-widest);text-transform:uppercase;color:var(--color-text-tertiary);
+  margin-bottom:var(--space-8);
+}
+.ticker{position:relative;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);}
+.ticker__track{display:flex;width:max-content;gap:var(--space-16);animation:marquee 42s linear infinite;will-change:transform;}
+.ticker:hover .ticker__track{animation-play-state:paused;}
+@keyframes marquee{from{transform:translate3d(0,0,0);}to{transform:translate3d(-50%,0,0);}}
+.ticker__group{display:flex;align-items:center;gap:var(--space-16);flex-shrink:0;}
+.client-logo{
+  display:flex;align-items:center;gap:var(--space-3);flex-shrink:0;
+  color:var(--color-text-tertiary);opacity:.75;
+  transition:opacity var(--duration-base) var(--ease-standard),color var(--duration-base) var(--ease-standard);
+}
+.ticker__track:hover .client-logo{opacity:.4;}
+.client-logo:hover{opacity:1;color:var(--color-text-primary);}
+.client-logo svg{flex-shrink:0;}
+.client-logo__name{font-size:var(--text-body-m);font-weight:var(--fw-bold);letter-spacing:var(--ls-tight);white-space:nowrap;}
+.client-logo__name em{font-style:normal;font-weight:var(--fw-light);}
+
+.proof__stats{
+  display:grid;gap:var(--space-8);margin-top:var(--space-12);padding-top:var(--space-12);
+  border-top:1px solid var(--color-border-subtle);text-align:center;
+}
+@media (min-width:700px){.proof__stats{grid-template-columns:repeat(3,1fr);gap:var(--space-6);}}
+.stat__value{
+  font-family:var(--font-data);font-size:clamp(1.75rem,1.1rem + 2.4vw,2.375rem);
+  font-weight:var(--fw-bold);color:var(--color-text-primary);line-height:1;letter-spacing:var(--ls-tight);
+}
+.stat__value .u{color:var(--color-accent-primary);}
+.stat__label{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wider);
+  text-transform:uppercase;color:var(--color-text-tertiary);margin-top:var(--space-3);
+}
+
+/* ==========================================================================
+   PROBLEMA
+   ========================================================================== */
+.pains{display:grid;gap:var(--space-6);}
+@media (min-width:860px){.pains{grid-template-columns:repeat(3,1fr);gap:var(--space-6);}}
+.pain{
+  position:relative;background:var(--color-bg-surface-raised);
+  border:1px solid var(--color-border-subtle);border-radius:var(--radius-l);
+  padding:var(--space-8);overflow:hidden;
+  transition:border-color var(--duration-base) var(--ease-standard),transform var(--duration-base) var(--ease-standard);
+}
+.pain:hover{border-color:var(--color-border-default);transform:var(--hover-lift);}
+.pain::before{content:'';position:absolute;top:0;left:0;width:100%;height:var(--accent-bar);background:var(--gradient-bar);opacity:.55;}
+.pain__num{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wider);
+  color:var(--color-accent-primary);margin-bottom:var(--space-5);display:block;
+}
+.pain__title{font-size:var(--text-heading-s);font-weight:var(--fw-bold);margin-bottom:var(--space-3);}
+.pain__text{font-size:var(--text-body-s);color:var(--color-text-secondary);}
+.pain__kicker{
+  margin-top:var(--space-6);padding-top:var(--space-5);border-top:1px solid var(--color-border-subtle);
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wide);
+  color:var(--color-text-tertiary);text-transform:uppercase;
+}
+.pains__closer{
+  margin-top:var(--space-12);padding:var(--space-8);border-radius:var(--radius-l);
+  background:var(--color-bg-surface);border:1px solid var(--color-border-subtle);
+  text-align:center;font-size:var(--text-body-l);color:var(--color-text-primary);
+}
+.pains__closer strong{color:var(--color-accent-primary);font-weight:var(--fw-bold);}
+
+/* ==========================================================================
+   COMO FUNCIONA — TIMELINE
+   ========================================================================== */
+.steps{position:relative;display:grid;gap:var(--space-10);}
+@media (min-width:900px){
+  .steps{grid-template-columns:repeat(4,1fr);gap:var(--space-6);}
+  .steps::before{
+    content:'';position:absolute;top:19px;left:6%;right:6%;height:1px;
+    background:linear-gradient(90deg,transparent,var(--cyan-tint-border) 12%,var(--cyan-tint-border) 88%,transparent);
+  }
+}
+.step{position:relative;}
+.step__dot{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  background:var(--color-bg-canvas);border:1px solid var(--cyan-tint-border);
+  font-family:var(--font-data);font-size:var(--text-body-s);font-weight:var(--fw-bold);
+  color:var(--color-accent-primary);margin-bottom:var(--space-6);position:relative;z-index:1;
+  box-shadow:var(--glow-sm);
+}
+.step__title{font-size:var(--text-heading-s);font-weight:var(--fw-bold);margin-bottom:var(--space-3);}
+.step__text{font-size:var(--text-body-s);color:var(--color-text-secondary);}
+.step__tag{
+  display:inline-block;margin-top:var(--space-5);padding:4px 11px;border-radius:var(--radius-pill);
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wide);
+  text-transform:uppercase;background:var(--color-bg-surface-raised);
+  border:1px solid var(--color-border-subtle);color:var(--color-text-tertiary);
+}
+.step--live .step__dot{background:var(--brand-gradient);color:var(--color-text-on-accent);border-color:transparent;}
+.step--live .step__tag{background:rgba(46,217,163,.12);border-color:rgba(46,217,163,.32);color:var(--color-success);}
+
+/* ==========================================================================
+   FEATURES ALTERNADAS
+   ========================================================================== */
+.feature{display:grid;gap:var(--space-10);align-items:center;padding-block:var(--space-16);}
+.feature + .feature{border-top:1px solid var(--color-border-subtle);}
+@media (min-width:960px){
+  .feature{grid-template-columns:1fr 1fr;gap:var(--space-20);padding-block:var(--space-20);}
+  .feature--flip .feature__media{order:-1;}
+}
+.feature__title{font-size:clamp(1.5rem,1.1rem + 1.6vw,var(--text-heading-l));font-weight:var(--fw-bold);margin-bottom:var(--space-5);}
+.feature__text{font-size:var(--text-body-m);margin-bottom:var(--space-6);}
+.feature__list{list-style:none;display:flex;flex-direction:column;gap:var(--space-3);}
+.feature__list li{display:flex;gap:var(--space-3);font-size:var(--text-body-s);color:var(--color-text-secondary);}
+.feature__list li::before{
+  content:'';width:16px;height:16px;flex-shrink:0;margin-top:4px;border-radius:50%;
+  background:var(--cyan-tint);border:1px solid var(--cyan-tint-border);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232DDCEB' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-size:10px;background-position:center;background-repeat:no-repeat;
+}
+.feature__media{
+  background:var(--color-bg-surface);border:1px solid var(--color-border-subtle);
+  border-radius:var(--radius-l);padding:var(--space-5);box-shadow:var(--shadow-m);
+  position:relative;overflow:hidden;
+}
+.feature__media::before{
+  content:'';position:absolute;inset:0;background-image:var(--grid-bg);background-size:var(--grid-size) var(--grid-size);opacity:.6;pointer-events:none;
+}
+.ui{position:relative;z-index:1;}
+.ui__bar{
+  display:flex;align-items:center;gap:var(--space-2);padding-bottom:var(--space-4);margin-bottom:var(--space-4);
+  border-bottom:1px solid var(--color-border-subtle);
+}
+.ui__dot{width:8px;height:8px;border-radius:50%;background:var(--color-border-strong);}
+.ui__title{
+  margin-left:var(--space-3);font-family:var(--font-mono);font-size:var(--text-2xs);
+  letter-spacing:var(--ls-wider);text-transform:uppercase;color:var(--color-text-tertiary);
+}
+
+/* --- mockup 1: pipeline CRM --- */
+.pipe{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);}
+.pipe__col{background:var(--color-bg-inset);border:1px solid var(--color-border-subtle);border-radius:var(--radius-s);padding:var(--space-3);min-height:190px;}
+.pipe__head{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wide);
+  text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:var(--space-3);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.pipe__count{font-family:var(--font-data);color:var(--color-accent-primary);font-weight:var(--fw-bold);}
+.pcard{
+  background:var(--color-bg-surface-raised);border:1px solid var(--color-border-subtle);
+  border-radius:var(--radius-s);padding:9px 10px;margin-bottom:var(--space-2);position:relative;overflow:hidden;
+}
+.pcard::before{content:'';position:absolute;left:0;top:0;width:2px;height:100%;background:var(--color-accent-primary);opacity:.7;}
+.pcard__name{font-size:var(--text-2xs);font-weight:var(--fw-semibold);color:var(--color-text-primary);}
+.pcard__meta{font-family:var(--font-mono);font-size:9px;color:var(--color-text-tertiary);margin-top:3px;}
+.pcard--travel{animation:travel 7s var(--ease-standard) infinite;}
+@keyframes travel{
+  0%,12%{transform:translate3d(0,0,0);opacity:1;}
+  22%,44%{transform:translate3d(calc(100% + 36px),0,0);}
+  54%,76%{transform:translate3d(calc(200% + 72px),0,0);}
+  86%,100%{transform:translate3d(calc(200% + 72px),0,0);opacity:0;}
+}
+.pcard--ghost{border-style:dashed;opacity:.45;}
+.pcard--ghost::before{opacity:.25;}
+
+/* --- mockup 2: score de qualificação --- */
+.score__row{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4);}
+.score__key{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wide);
+  text-transform:uppercase;color:var(--color-text-tertiary);width:96px;flex-shrink:0;
+}
+.score__track{display:block;flex:1;height:8px;border-radius:var(--radius-pill);background:var(--color-bg-inset);border:1px solid var(--color-border-subtle);overflow:hidden;}
+.score__fill{display:block;height:100%;border-radius:var(--radius-pill);background:var(--gradient-bar);width:0;box-shadow:var(--glow-sm);transition:width 900ms var(--ease-standard);}
+.is-revealed .score__fill{width:var(--w);}
+.score__row:nth-child(2) .score__fill{transition-delay:90ms;}
+.score__row:nth-child(3) .score__fill{transition-delay:180ms;}
+.score__row:nth-child(4) .score__fill{transition-delay:270ms;}
+.score__val{font-family:var(--font-data);font-size:var(--text-2xs);font-weight:var(--fw-bold);color:var(--color-text-primary);width:36px;text-align:right;flex-shrink:0;}
+.score__verdict{
+  margin-top:var(--space-5);padding:var(--space-4);border-radius:var(--radius-s);
+  background:rgba(46,217,163,.08);border:1px solid rgba(46,217,163,.28);
+  display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;
+}
+.score__verdict-label{font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wide);text-transform:uppercase;color:var(--color-text-tertiary);}
+.score__verdict-val{font-family:var(--font-data);font-size:var(--text-body-s);font-weight:var(--fw-bold);color:var(--color-success);}
+
+/* --- mockup 3: handoff --- */
+.handoff{display:flex;flex-direction:column;gap:var(--space-3);}
+.hmsg{padding:9px 12px;border-radius:var(--radius-s);font-size:var(--text-2xs);line-height:1.5;max-width:88%;}
+.hmsg--bot{align-self:flex-start;background:var(--cyan-tint);border:1px solid var(--cyan-tint-border);color:var(--color-text-primary);}
+.hmsg--lead{align-self:flex-end;background:var(--color-bg-surface-raised);border:1px solid var(--color-border-subtle);color:var(--color-text-secondary);}
+.handoff__divider{
+  display:flex;align-items:center;gap:var(--space-3);margin-block:var(--space-2);
+  font-family:var(--font-mono);font-size:9px;letter-spacing:var(--ls-wider);text-transform:uppercase;color:var(--color-warning);
+}
+.handoff__divider::before,.handoff__divider::after{content:'';flex:1;height:1px;background:rgba(242,185,76,.28);}
+.hmsg--human{align-self:flex-start;background:var(--color-bg-surface-raised);border:1px solid rgba(242,185,76,.32);color:var(--color-text-primary);}
+.hmsg--human .hmsg__who{display:block;font-family:var(--font-mono);font-size:9px;color:var(--color-warning);margin-bottom:4px;letter-spacing:var(--ls-wide);}
+.handoff__pulse{width:6px;height:6px;border-radius:50%;background:var(--color-warning);animation:pulse 1.8s infinite;flex-shrink:0;}
+
+/* ==========================================================================
+   DEPOIMENTOS
+   ========================================================================== */
+.quotes{display:grid;gap:var(--space-6);}
+@media (min-width:900px){.quotes{grid-template-columns:repeat(3,1fr);}}
+.quote{
+  display:flex;flex-direction:column;
+  background:var(--color-bg-surface-raised);border:1px solid var(--color-border-subtle);
+  border-radius:var(--radius-l);padding:var(--space-8);
+  transition:border-color var(--duration-base) var(--ease-standard),transform var(--duration-base) var(--ease-standard),box-shadow var(--duration-base);
+}
+.quote:hover{border-color:var(--cyan-tint-border);transform:var(--hover-lift);box-shadow:var(--glow-md);}
+.quote__metric{
+  font-family:var(--font-data);font-size:var(--text-heading-m);font-weight:var(--fw-bold);
+  color:var(--color-accent-primary);line-height:1;margin-bottom:var(--space-2);letter-spacing:var(--ls-tight);
+}
+.quote__metric-label{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wide);
+  text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:var(--space-6);
+  padding-bottom:var(--space-6);border-bottom:1px solid var(--color-border-subtle);
+}
+.quote__text{font-size:var(--text-body-s);color:var(--color-text-secondary);flex:1;margin-bottom:var(--space-6);}
+.quote__person{display:flex;align-items:center;gap:var(--space-3);}
+.quote__avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+  background:var(--color-bg-inset);border:1px solid var(--cyan-tint-border);
+  font-family:var(--font-mono);font-size:var(--text-caption);font-weight:var(--fw-bold);color:var(--color-accent-primary);
+}
+.quote__name{font-size:var(--text-body-s);font-weight:var(--fw-semibold);color:var(--color-text-primary);}
+.quote__role{font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--color-text-tertiary);letter-spacing:var(--ls-wide);}
+
+/* ==========================================================================
+   FORMULÁRIO
+   ========================================================================== */
+.form-section{position:relative;overflow:hidden;background:var(--color-bg-surface);border-block:1px solid var(--color-border-subtle);}
+.form-section .orb{width:min(700px,110vw);height:min(700px,110vw);top:-300px;left:50%;transform:translateX(-50%);}
+.form-grid{position:relative;z-index:1;display:grid;gap:var(--space-12);align-items:start;}
+@media (min-width:1000px){.form-grid{grid-template-columns:.9fr 1.1fr;gap:var(--space-20);}}
+.form-aside__title{font-size:clamp(1.75rem,1.2rem + 2.2vw,var(--text-display-m));font-weight:var(--fw-extrabold);margin-bottom:var(--space-5);}
+.form-aside__text{font-size:var(--text-body-l);margin-bottom:var(--space-8);}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:var(--space-4);margin-bottom:var(--space-8);}
+.checklist li{display:flex;gap:var(--space-4);font-size:var(--text-body-s);color:var(--color-text-secondary);}
+.checklist li strong{display:block;color:var(--color-text-primary);font-weight:var(--fw-semibold);margin-bottom:2px;}
+.checklist__idx{
+  font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--color-accent-primary);
+  flex-shrink:0;padding-top:3px;letter-spacing:var(--ls-wide);
+}
+.form-aside__note{
+  padding:var(--space-5);border-radius:var(--radius-m);background:var(--color-bg-inset);
+  border:1px solid var(--color-border-subtle);font-size:var(--text-body-s);color:var(--color-text-tertiary);
+}
+.form-aside__note strong{color:var(--color-text-secondary);font-weight:var(--fw-semibold);}
+
+.form-card{
+  background:var(--color-bg-surface-raised);border:1px solid var(--color-border-default);
+  border-radius:var(--radius-xl);padding:var(--space-8);box-shadow:var(--shadow-l);
+}
+@media (min-width:600px){.form-card{padding:var(--space-10);}}
+.form-card__head{margin-bottom:var(--space-8);padding-bottom:var(--space-6);border-bottom:1px solid var(--color-border-subtle);}
+.form-card__title{font-size:var(--text-heading-m);font-weight:var(--fw-bold);margin-bottom:var(--space-2);}
+.form-card__sub{font-size:var(--text-body-s);color:var(--color-text-tertiary);}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:var(--space-5);}
+.field__label{font-size:var(--text-body-s);font-weight:var(--fw-medium);color:var(--color-text-secondary);}
+.field__label .req{color:var(--color-accent-primary);}
+.field input,.field select{
+  font-family:var(--font-sans);font-size:var(--text-body-m);color:var(--color-text-primary);
+  background:var(--color-bg-inset);border:1px solid var(--color-border-default);
+  border-radius:var(--radius-m);padding:12px 14px;outline:none;width:100%;
+  transition:border-color var(--duration-base) var(--ease-standard),box-shadow var(--duration-base) var(--ease-standard);
+}
+.field input::placeholder{color:rgba(170,183,196,.42);}
+.field input:focus,.field select:focus{border-color:var(--color-accent-primary);box-shadow:var(--glow-focus);}
+.field select{
+  appearance:none;cursor:pointer;padding-right:42px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23AAB7C4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:16px;
+}
+.field select option{background:var(--color-bg-surface);color:var(--color-text-primary);}
+.field select:invalid,.field select[data-placeholder="true"]{color:rgba(170,183,196,.42);}
+.field.has-error input,.field.has-error select{border-color:var(--color-danger);box-shadow:none;}
+.field__error{
+  font-size:var(--text-caption);color:var(--color-danger);display:none;align-items:center;gap:6px;
+}
+.field.has-error .field__error{display:flex;}
+.field__hint{font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--color-text-tertiary);letter-spacing:var(--ls-wide);}
+.form-row{display:grid;gap:0;}
+@media (min-width:560px){.form-row{grid-template-columns:1fr 1fr;gap:var(--space-5);}.form-row .field{margin-bottom:var(--space-5);}}
+.form-card__footer{margin-top:var(--space-8);}
+.form-legal{
+  margin-top:var(--space-5);font-size:var(--text-caption);color:var(--color-text-tertiary);text-align:center;line-height:1.6;
+}
+.form-success{
+  display:none;text-align:center;padding-block:var(--space-8);
+}
+.form-success.is-visible{display:block;animation:fadeUp var(--duration-slow) var(--ease-standard) both;}
+.form-success__icon{
+  width:56px;height:56px;border-radius:50%;margin:0 auto var(--space-6);display:grid;place-items:center;
+  background:rgba(46,217,163,.12);border:1px solid rgba(46,217,163,.32);
+}
+.form-success__title{font-size:var(--text-heading-s);font-weight:var(--fw-bold);margin-bottom:var(--space-3);}
+.form-success__text{font-size:var(--text-body-s);color:var(--color-text-secondary);max-width:42ch;margin:0 auto var(--space-6);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ==========================================================================
+   FAQ
+   ========================================================================== */
+.faq{max-width:820px;margin-inline:auto;border-top:1px solid var(--color-border-subtle);}
+.faq__item{border-bottom:1px solid var(--color-border-subtle);}
+.faq__q{
+  width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-6);
+  background:transparent;border:none;cursor:pointer;text-align:left;padding:var(--space-6) 0;
+  font-size:var(--text-body-l);font-weight:var(--fw-semibold);color:var(--color-text-primary);
+  transition:color var(--duration-base) var(--ease-standard);
+}
+.faq__q:hover{color:var(--color-accent-primary);}
+.faq__icon{
+  position:relative;width:20px;height:20px;flex-shrink:0;margin-top:5px;
+  transition:transform var(--duration-slow) var(--ease-standard);
+}
+.faq__icon::before,.faq__icon::after{
+  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--color-accent-primary);
+}
+.faq__icon::before{width:13px;height:1.5px;}
+.faq__icon::after{width:1.5px;height:13px;transition:opacity var(--duration-base) var(--ease-standard);}
+.faq__q[aria-expanded="true"] .faq__icon{transform:rotate(180deg);}
+.faq__q[aria-expanded="true"] .faq__icon::after{opacity:0;}
+.faq__a{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--duration-slow) var(--ease-standard);}
+.faq__a.is-open{grid-template-rows:1fr;}
+.faq__a-inner{min-height:0;overflow:hidden;}
+.faq__a p{padding-bottom:var(--space-6);font-size:var(--text-body-m);color:var(--color-text-secondary);max-width:66ch;}
+.faq__a p + p{margin-top:var(--space-4);}
+
+/* ==========================================================================
+   CTA FINAL
+   ========================================================================== */
+.final{position:relative;overflow:hidden;text-align:center;}
+.final__bg{position:absolute;inset:0;background-image:var(--grid-bg);background-size:var(--grid-size) var(--grid-size);
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000,transparent 72%);
+          mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000,transparent 72%);}
+.final .orb{width:min(640px,110vw);height:min(640px,110vw);top:50%;left:50%;transform:translate(-50%,-50%);}
+.final__inner{position:relative;z-index:1;max-width:880px;margin-inline:auto;}
+.final__title{font-size:clamp(1.875rem,1.35rem + 2.3vw,2.75rem);font-weight:var(--fw-extrabold);line-height:var(--lh-tight);margin-bottom:var(--space-6);}
+.final__text{font-size:var(--text-body-l);margin-bottom:var(--space-10);max-width:56ch;margin-inline:auto;}
+.slots{
+  display:inline-flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;justify-content:center;
+  padding:var(--space-4) var(--space-6);border-radius:var(--radius-pill);
+  background:var(--color-bg-surface-raised);border:1px solid var(--color-border-subtle);
+  margin-bottom:var(--space-8);
+}
+.slots__label{font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wider);text-transform:uppercase;color:var(--color-text-tertiary);}
+.slots__dots{display:flex;gap:6px;}
+.slots__dot{width:9px;height:9px;border-radius:50%;background:var(--color-border-strong);}
+.slots__dot.is-open{background:var(--color-success);box-shadow:0 0 10px rgba(46,217,163,.7);}
+.slots__count{font-family:var(--font-data);font-size:var(--text-body-s);font-weight:var(--fw-bold);color:var(--color-text-primary);}
+.guarantee{
+  max-width:560px;margin:var(--space-12) auto 0;padding:var(--space-6);
+  border-radius:var(--radius-l);background:var(--color-bg-surface);
+  border:1px solid var(--cyan-tint-border);display:flex;gap:var(--space-5);text-align:left;align-items:flex-start;
+}
+.guarantee__seal{
+  width:44px;height:44px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;
+  background:var(--cyan-tint);border:1px solid var(--cyan-tint-border);
+}
+.guarantee__title{font-size:var(--text-body-m);font-weight:var(--fw-bold);color:var(--color-text-primary);margin-bottom:var(--space-2);}
+.guarantee__text{font-size:var(--text-body-s);color:var(--color-text-secondary);}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.footer{border-top:1px solid var(--color-border-subtle);background:var(--color-bg-surface);padding-block:var(--space-16) var(--space-10);}
+.footer__grid{display:grid;gap:var(--space-10);margin-bottom:var(--space-12);}
+@media (min-width:800px){.footer__grid{grid-template-columns:1.6fr 1fr 1fr;gap:var(--space-16);}}
+.footer__about{font-size:var(--text-body-s);color:var(--color-text-tertiary);max-width:42ch;margin-top:var(--space-5);}
+.footer__pillars{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-widest);
+  text-transform:uppercase;color:var(--color-accent-primary);margin-top:var(--space-5);
+}
+.footer__title{
+  font-family:var(--font-mono);font-size:var(--text-2xs);letter-spacing:var(--ls-wider);
+  text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:var(--space-5);
+}
+.footer__list{list-style:none;display:flex;flex-direction:column;gap:var(--space-3);}
+.footer__list a,.footer__list span{font-size:var(--text-body-s);color:var(--color-text-secondary);}
+.footer__list a:hover{color:var(--color-text-primary);}
+.footer__bottom{
+  padding-top:var(--space-8);border-top:1px solid var(--color-border-subtle);
+  display:flex;flex-wrap:wrap;gap:var(--space-4);justify-content:space-between;align-items:center;
+  font-size:var(--text-caption);color:var(--color-text-tertiary);
+}
+
+/* ==========================================================================
+   REVEAL ON SCROLL
+   ========================================================================== */
+/* gated pela classe .js — sem JS (ou se o observer falhar) o conteúdo
+   permanece visível, nunca preso em opacity:0 */
+.js .reveal{opacity:0;transform:translateY(16px);
+  transition:opacity 520ms var(--ease-standard),transform 520ms var(--ease-standard);}
+.js .reveal.is-revealed{opacity:1;transform:none;}
+.reveal[data-d="1"]{transition-delay:80ms;}
+.reveal[data-d="2"]{transition-delay:160ms;}
+.reveal[data-d="3"]{transition-delay:240ms;}
+.reveal[data-d="4"]{transition-delay:320ms;}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+  .js .reveal{opacity:1;transform:none;}
+  .msg,.typing,.crm-toast{opacity:1;transform:none;}
+  .score__fill{width:var(--w);}
+}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="container">
+    <div class="nav__inner">
+      <a href="#topo" class="logo" aria-label="IIR Sales Agent — início">
+        <svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#2DDCEB"/><stop offset="1" stop-color="#1296D4"/>
+            </linearGradient>
+          </defs>
+          <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="7" stroke="url(#lg)" stroke-width="1.5"/>
+          <path d="M7 22L13 15L19 18.5L25.5 9.5" stroke="url(#lg)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="7" cy="22" r="2.2" fill="#2DDCEB"/>
+          <circle cx="13" cy="15" r="2.2" fill="#2DDCEB"/>
+          <circle cx="19" cy="18.5" r="2.2" fill="#1296D4"/>
+          <circle cx="25.5" cy="9.5" r="2.2" fill="#1296D4"/>
+        </svg>
+        <span class="logo__text">
+          <span class="logo__name">IIR Sales Agent</span>
+          <span class="logo__sub">por IIR Labs</span>
+        </span>
+      </a>
+
+      <nav class="nav__links" aria-label="Navegação principal">
+        <a class="nav__link" href="#operacao">Como opera</a>
+        <a class="nav__link" href="#capacidades">Capacidades</a>
+        <a class="nav__link" href="#perguntas">Perguntas</a>
+      </nav>
+
+      <a href="#diagnostico" class="btn btn--primary btn--s nav__cta" data-magnetic data-scroll>
+        <span class="btn__inner">Solicitar diagnóstico</span>
+      </a>
+
+      <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navMobile" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav__mobile" id="navMobile">
+    <div class="nav__mobile-inner">
+      <div class="nav__mobile-list">
+        <a href="#operacao" data-scroll>Como opera</a>
+        <a href="#capacidades" data-scroll>Capacidades</a>
+        <a href="#perguntas" data-scroll>Perguntas</a>
+        <a href="#diagnostico" class="btn btn--primary btn--block" data-scroll><span class="btn__inner">Solicitar diagnóstico</span></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="topo">
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="orb orb--a" aria-hidden="true"></div>
+  <div class="orb orb--b" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="hero__inner">
+
+      <div class="hero__copy">
+        <span class="hero__badge reveal">
+          <span class="pulse-dot"></span>
+          IA + CRM no WhatsApp
+        </span>
+
+        <h1 class="hero__title reveal" data-d="1">
+          Seu time comercial responde em horas.<br>
+          <span class="accent">O concorrente respondeu em segundos.</span>
+        </h1>
+
+        <p class="hero__lead reveal" data-d="2">
+          O IIR Sales Agent atende cada lead que chega no seu WhatsApp, faz as perguntas
+          de qualificação que o seu time faria, registra tudo no CRM e passa a conversa
+          para um vendedor no momento certo. Mesmo padrão às 3h da manhã e no pico da
+          segunda-feira, com o time que você já tem.
+        </p>
+
+        <div class="hero__actions reveal" data-d="3">
+          <a href="#diagnostico" class="btn btn--primary btn--lg" data-magnetic data-scroll>
+            <span class="btn__inner">
+              Solicitar diagnóstico gratuito
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </a>
+          <a href="#operacao" class="btn btn--ghost btn--lg" data-scroll>
+            <span class="btn__inner">Ver como opera</span>
+          </a>
+        </div>
+
+        <p class="hero__note reveal" data-d="4">
+          <span class="pulse-dot"></span>
+          Implementação sob medida • Integração ao seu CRM • Suporte contínuo
+        </p>
+      </div>
+
+      <div class="hero__media reveal" data-d="2">
+        <div class="phone" id="phoneMock">
+          <div class="phone__screen">
+            <div class="phone__bar">
+              <div class="phone__avatar">RV</div>
+              <div class="phone__who">
+                <div class="phone__name">Renata Vasconcelos</div>
+                <div class="phone__status"><span class="pulse-dot"></span> lead novo • meta ads</div>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#AAB7C4" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </div>
+            <div class="phone__body" id="chatBody" aria-hidden="true"></div>
+          </div>
+          <div class="crm-toast" id="crmToast">
+            <div class="crm-toast__label">CRM atualizado</div>
+            <div class="crm-toast__row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2DDCEB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+              Renata Vasconcelos
+            </div>
+            <div class="crm-toast__stage">
+              <span>Novo</span>
+              <span class="crm-toast__arrow">→</span>
+              <span class="crm-toast__chip">Qualificado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROVA SOCIAL ================= -->
+<section class="proof">
+  <div class="container">
+    <p class="proof__label reveal">Operações comerciais que rodam com o IIR Sales Agent</p>
+  </div>
+
+  <div class="ticker" aria-label="Empresas atendidas">
+    <div class="ticker__track" id="tickerTrack">
+      <div class="ticker__group">
+        <!-- 1 — indústria -->
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V10l5 3.5V10l5 3.5V10l5 3.5V20z"/><path d="M18 10V4h3v16"/></svg>
+          <span class="client-logo__name">VERTAX<em> Indústria</em></span>
+        </div>
+        <!-- 2 — serviços B2B -->
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>
+          <span class="client-logo__name">Meridiano<em> Serviços</em></span>
+        </div>
+        <!-- 3 — saúde -->
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 3 10 2.5-5H21"/></svg>
+          <span class="client-logo__name">Rede<em> Cardiovita</em></span>
+        </div>
+        <!-- 4 — educação -->
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8l10-4 10 4-10 4z"/><path d="M6 10.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/></svg>
+          <span class="client-logo__name">Instituto<em> Aurélio</em></span>
+        </div>
+        <!-- 5 — logística/serviços -->
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 0 0 18M12 3a14 14 0 0 1 0 18M3.5 9h17M3.5 15h17"/></svg>
+          <span class="client-logo__name">Nordeste<em> Log</em></span>
+        </div>
+      </div>
+      <div class="ticker__group" aria-hidden="true">
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V10l5 3.5V10l5 3.5V10l5 3.5V20z"/><path d="M18 10V4h3v16"/></svg>
+          <span class="client-logo__name">VERTAX<em> Indústria</em></span>
+        </div>
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>
+          <span class="client-logo__name">Meridiano<em> Serviços</em></span>
+        </div>
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 3 10 2.5-5H21"/></svg>
+          <span class="client-logo__name">Rede<em> Cardiovita</em></span>
+        </div>
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l10-4 10 4-10 4z"/><path d="M6 10.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/></svg>
+          <span class="client-logo__name">Instituto<em> Aurélio</em></span>
+        </div>
+        <div class="client-logo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 0 0 18M12 3a14 14 0 0 1 0 18M3.5 9h17M3.5 15h17"/></svg>
+          <span class="client-logo__name">Nordeste<em> Log</em></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="proof__stats reveal">
+      <div class="stat">
+        <div class="stat__value"><span class="u">R$</span> <span data-count="4.2" data-dec="1">0</span> <span class="u">mi</span></div>
+        <div class="stat__label">em oportunidades recuperadas</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value">+<span data-count="32">0</span><span class="u">%</span></div>
+        <div class="stat__label">na taxa média de resposta</div>
+      </div>
+      <div class="stat">
+        <div class="stat__value"><span data-count="41">0</span><span class="u">s</span></div>
+        <div class="stat__label">tempo médio de primeira resposta</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEMA ================= -->
+<section class="section" id="problema">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">O gargalo real</span>
+      <h2 class="section-title">O problema quase nunca está na geração de leads</h2>
+      <p class="section-lead">
+        Empresas com operação comercial madura já sabem gerar demanda. O dinheiro
+        vaza depois: entre o momento em que o lead manda a primeira mensagem e o
+        momento em que alguém competente responde.
+      </p>
+    </div>
+
+    <div class="pains">
+      <article class="pain reveal" data-d="1">
+        <span class="pain__num">DOR 01</span>
+        <h3 class="pain__title">O lead esfria enquanto espera</h3>
+        <p class="pain__text">
+          Uma mensagem que chega às 19h de sexta é respondida na segunda de manhã.
+          Nesse intervalo o comprador já falou com dois concorrentes e fechou com
+          quem atendeu primeiro.
+        </p>
+        <p class="pain__kicker">Velocidade decide a venda antes do preço</p>
+      </article>
+
+      <article class="pain reveal" data-d="2">
+        <span class="pain__num">DOR 02</span>
+        <h3 class="pain__title">Cada atendente vende de um jeito</h3>
+        <p class="pain__text">
+          Um faz as perguntas certas, outro pula direto para o orçamento, um terceiro
+          esquece de registrar. O resultado do mês depende de quem pegou o lead, e
+          isso não aparece em nenhum relatório.
+        </p>
+        <p class="pain__kicker">Padrão de atendimento vira loteria</p>
+      </article>
+
+      <article class="pain reveal" data-d="3">
+        <span class="pain__num">DOR 03</span>
+        <h3 class="pain__title">Escalar significa contratar de novo</h3>
+        <p class="pain__text">
+          Dobrar o volume de leads exige mais gente, mais treinamento, mais
+          supervisão. O custo do time cresce na mesma velocidade da receita e a
+          margem fica onde estava.
+        </p>
+        <p class="pain__kicker">Crescimento que não gera alavancagem</p>
+      </article>
+    </div>
+
+    <p class="pains__closer reveal">
+      Você não precisa de mais leads. Precisa que <strong>nenhum deles fique sem resposta</strong>
+      e que todos passem pelo mesmo filtro antes de chegar ao vendedor.
+    </p>
+  </div>
+</section>
+
+<!-- ================= COMO FUNCIONA ================= -->
+<section class="section" id="operacao" style="background:var(--color-bg-surface);border-block:1px solid var(--color-border-subtle);">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow eyebrow--center">Implementação</span>
+      <h2 class="section-title">Quatro etapas até o agente entrar em operação</h2>
+      <p class="section-lead">
+        O IIR Sales Agent não é um aplicativo que você assina e configura sozinho.
+        Cada implementação começa com um diagnóstico da sua operação e termina com
+        um agente treinado no seu processo, no seu tom e no seu CRM.
+      </p>
+    </div>
+
+    <div class="steps">
+      <article class="step reveal" data-d="1">
+        <div class="step__dot">01</div>
+        <h3 class="step__title">Diagnóstico comercial</h3>
+        <p class="step__text">
+          Mapeamos volume de leads, canais de origem, funil atual e onde as
+          oportunidades estão parando hoje. Você recebe esse desenho mesmo que
+          decida não seguir adiante.
+        </p>
+        <span class="step__tag">Sem compromisso</span>
+      </article>
+
+      <article class="step reveal" data-d="2">
+        <div class="step__dot">02</div>
+        <h3 class="step__title">Treinamento do agente</h3>
+        <p class="step__text">
+          O agente aprende seu catálogo, suas objeções recorrentes, seus critérios
+          de qualificação e o tom que a sua marca usa. Nada de script genérico de
+          prateleira.
+        </p>
+        <span class="step__tag">Sob medida</span>
+      </article>
+
+      <article class="step reveal" data-d="3">
+        <div class="step__dot">03</div>
+        <h3 class="step__title">Integração ao CRM</h3>
+        <p class="step__text">
+          Conectamos ao CRM que sua equipe já usa. Cada conversa vira registro,
+          etapa de funil e histórico consultável, sem digitação manual do vendedor.
+        </p>
+        <span class="step__tag">RD, HubSpot, Pipedrive</span>
+      </article>
+
+      <article class="step reveal step--live" data-d="4">
+        <div class="step__dot">04</div>
+        <h3 class="step__title">Operação e ajuste</h3>
+        <p class="step__text">
+          O agente entra no ar acompanhado. Revisamos conversas reais, corrigimos
+          desvios e calibramos os critérios de qualificação enquanto o volume sobe.
+        </p>
+        <span class="step__tag">Suporte contínuo</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section class="section" id="capacidades">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Capacidades</span>
+      <h2 class="section-title">O que o agente faz enquanto seu time dorme</h2>
+      <p class="section-lead">
+        Três funções que respondem por quase toda a diferença entre um funil que
+        vaza e um funil que fecha.
+      </p>
+    </div>
+
+    <!-- FEATURE 1 -->
+    <article class="feature">
+      <div class="feature__copy reveal">
+        <span class="eyebrow">01 — CRM integrado</span>
+        <h3 class="feature__title">Toda conversa vira registro, sem ninguém digitar</h3>
+        <p class="feature__text">
+          O vendedor abre o CRM e encontra o lead já cadastrado, com o resumo da
+          conversa, as respostas de qualificação e a etapa correta do funil. O
+          histórico de WhatsApp deixa de morrer no celular de quem atendeu.
+        </p>
+        <ul class="feature__list">
+          <li>Criação e movimentação automática de oportunidades no funil</li>
+          <li>Origem de campanha preservada do primeiro clique até o fechamento</li>
+          <li>Resumo da conversa escrito em linguagem de vendas, não em log técnico</li>
+        </ul>
+      </div>
+      <div class="feature__media reveal" data-d="1">
+        <div class="ui">
+          <div class="ui__bar">
+            <span class="ui__dot"></span><span class="ui__dot"></span><span class="ui__dot"></span>
+            <span class="ui__title">Funil comercial</span>
+          </div>
+          <div class="pipe">
+            <div class="pipe__col">
+              <div class="pipe__head"><span>Novo</span><span class="pipe__count">18</span></div>
+              <div class="pcard pcard--travel">
+                <div class="pcard__name">Renata Vasconcelos</div>
+                <div class="pcard__meta">meta ads • 41s</div>
+              </div>
+              <div class="pcard pcard--ghost">
+                <div class="pcard__name">Marcos Aleixo</div>
+                <div class="pcard__meta">google ads</div>
+              </div>
+            </div>
+            <div class="pipe__col">
+              <div class="pipe__head"><span>Qualificado</span><span class="pipe__count">09</span></div>
+              <div class="pcard pcard--ghost">
+                <div class="pcard__name">Bianca Toledo</div>
+                <div class="pcard__meta">orgânico</div>
+              </div>
+            </div>
+            <div class="pipe__col">
+              <div class="pipe__head"><span>Reunião</span><span class="pipe__count">04</span></div>
+              <div class="pcard pcard--ghost">
+                <div class="pcard__name">Eduardo Prata</div>
+                <div class="pcard__meta">indicação</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- FEATURE 2 -->
+    <article class="feature feature--flip">
+      <div class="feature__copy reveal">
+        <span class="eyebrow">02 — Qualificação</span>
+        <h3 class="feature__title">Seu vendedor só fala com quem tem chance de comprar</h3>
+        <p class="feature__text">
+          O agente aplica os mesmos critérios que o seu melhor vendedor aplicaria:
+          porte, urgência, orçamento disponível, poder de decisão. Quem passa vai
+          para a agenda. Quem não passa recebe uma resposta educada e continua na base.
+        </p>
+        <ul class="feature__list">
+          <li>Critérios definidos por você durante a implementação</li>
+          <li>Pontuação visível no CRM antes do primeiro contato humano</li>
+          <li>Descarte respeitoso, sem queimar a marca com quem ainda não é hora</li>
+        </ul>
+      </div>
+      <div class="feature__media reveal" data-d="1">
+        <div class="ui">
+          <div class="ui__bar">
+            <span class="ui__dot"></span><span class="ui__dot"></span><span class="ui__dot"></span>
+            <span class="ui__title">Score do lead</span>
+          </div>
+          <div class="score" id="scoreMock">
+            <div class="score__row">
+              <span class="score__key">Porte</span>
+              <span class="score__track"><span class="score__fill" style="--w:92%"></span></span>
+              <span class="score__val">92</span>
+            </div>
+            <div class="score__row">
+              <span class="score__key">Urgência</span>
+              <span class="score__track"><span class="score__fill" style="--w:78%"></span></span>
+              <span class="score__val">78</span>
+            </div>
+            <div class="score__row">
+              <span class="score__key">Orçamento</span>
+              <span class="score__track"><span class="score__fill" style="--w:85%"></span></span>
+              <span class="score__val">85</span>
+            </div>
+            <div class="score__row">
+              <span class="score__key">Decisão</span>
+              <span class="score__track"><span class="score__fill" style="--w:70%"></span></span>
+              <span class="score__val">70</span>
+            </div>
+            <div class="score__verdict">
+              <span class="score__verdict-label">Encaminhar para</span>
+              <span class="score__verdict-val">Consultor sênior • hoje</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- FEATURE 3 -->
+    <article class="feature">
+      <div class="feature__copy reveal">
+        <span class="eyebrow">03 — Handoff humano</span>
+        <h3 class="feature__title">A IA sabe a hora exata de sair da conversa</h3>
+        <p class="feature__text">
+          Negociação de contrato, pedido fora do padrão, cliente irritado: nessas
+          situações o agente para, resume o contexto e chama o vendedor certo. O
+          humano entra sabendo tudo o que já foi dito, no mesmo número de WhatsApp.
+        </p>
+        <ul class="feature__list">
+          <li>Gatilhos de transferência definidos com o seu time comercial</li>
+          <li>Contexto completo entregue ao vendedor antes dele digitar a primeira palavra</li>
+          <li>Escalonamento por horário, carteira ou especialidade</li>
+        </ul>
+      </div>
+      <div class="feature__media reveal" data-d="1">
+        <div class="ui">
+          <div class="ui__bar">
+            <span class="ui__dot"></span><span class="ui__dot"></span><span class="ui__dot"></span>
+            <span class="ui__title">Transferência ao vivo</span>
+          </div>
+          <div class="handoff">
+            <div class="hmsg hmsg--bot">Consegui reservar as 3 unidades. Quer que eu já emita a proposta?</div>
+            <div class="hmsg hmsg--lead">Preciso de condição especial de pagamento pra fechar as 12 de uma vez.</div>
+            <div class="handoff__divider"><span class="handoff__pulse"></span> negociação detectada • chamando humano</div>
+            <div class="hmsg hmsg--human">
+              <span class="hmsg__who">Carlos Bittencourt • Consultor sênior</span>
+              Renata, aqui é o Carlos. Vi o pedido das 12 unidades. Consigo trabalhar em 3 parcelas.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ================= DEPOIMENTOS ================= -->
+<section class="section" style="background:var(--color-bg-surface);border-block:1px solid var(--color-border-subtle);">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow eyebrow--center">Resultados</span>
+      <h2 class="section-title">O que muda no terceiro mês de operação</h2>
+      <p class="section-lead">
+        Três operações comerciais com volume, time montado e o mesmo gargalo de
+        tempo de resposta.
+      </p>
+    </div>
+
+    <div class="quotes">
+      <article class="quote reveal" data-d="1">
+        <div class="quote__metric">3.400 → 3.400</div>
+        <div class="quote__metric-label">Mesmo volume de leads, 2 vendedores a menos</div>
+        <p class="quote__text">
+          Estávamos prestes a abrir duas vagas de pré-vendas para dar conta do
+          volume. O agente absorveu a triagem inteira e as vagas deixaram de
+          existir. Meus vendedores hoje só entram em conversa que já passou pelo filtro.
+        </p>
+        <div class="quote__person">
+          <div class="quote__avatar">RM</div>
+          <div>
+            <div class="quote__name">Ricardo Menezes</div>
+            <div class="quote__role">Diretor comercial • Vertax • Joinville</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="quote reveal" data-d="2">
+        <div class="quote__metric">4h20 → 38s</div>
+        <div class="quote__metric-label">Tempo médio de primeira resposta</div>
+        <p class="quote__text">
+          A gente sabia que demorava, mas ninguém tinha o número. Depois do
+          diagnóstico ficou claro que perdíamos negócio na primeira hora. Hoje a
+          taxa de conversão de agendamento subiu 27% sem mexer em verba de mídia.
+        </p>
+        <div class="quote__person">
+          <div class="quote__avatar">JF</div>
+          <div>
+            <div class="quote__name">Juliana Ferraz</div>
+            <div class="quote__role">Head de vendas • Rede Cardiovita • Recife</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="quote reveal" data-d="3">
+        <div class="quote__metric">+19 p.p.</div>
+        <div class="quote__metric-label">Taxa de comparecimento em reuniões</div>
+        <p class="quote__text">
+          O ganho que eu não esperava foi de previsibilidade. Todo lead entra no
+          CRM com a mesma estrutura de informação, então minha reunião de pipeline
+          parou de ser discussão de achismo e virou leitura de dado.
+        </p>
+        <div class="quote__person">
+          <div class="quote__avatar">AT</div>
+          <div>
+            <div class="quote__name">André Tavares</div>
+            <div class="quote__role">Gerente comercial • Instituto Aurélio • Goiânia</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FORMULÁRIO ================= -->
+<section class="section form-section" id="diagnostico">
+  <div class="orb" aria-hidden="true"></div>
+  <div class="container">
+    <div class="form-grid">
+
+      <aside class="form-aside reveal">
+        <span class="eyebrow">Diagnóstico comercial</span>
+        <h2 class="form-aside__title">Antes de propor qualquer coisa, a gente olha a sua operação</h2>
+        <p class="form-aside__text">
+          Uma conversa de aproximadamente 40 minutos com quem conduz a implementação.
+          Você sai com o mapa de onde o seu funil está perdendo oportunidade, tenha
+          ou não interesse em seguir com o projeto.
+        </p>
+
+        <ul class="checklist">
+          <li>
+            <span class="checklist__idx">01</span>
+            <span><strong>Leitura do seu funil atual</strong>Onde os leads chegam, quanto tempo esperam e em que etapa param de responder.</span>
+          </li>
+          <li>
+            <span class="checklist__idx">02</span>
+            <span><strong>Estimativa de oportunidade parada</strong>Quanto do volume que você já paga para gerar não recebe atendimento adequado.</span>
+          </li>
+          <li>
+            <span class="checklist__idx">03</span>
+            <span><strong>Desenho da implementação</strong>Como o agente se encaixaria no seu CRM e no seu processo, com prazo realista.</span>
+          </li>
+        </ul>
+
+        <p class="form-aside__note">
+          <strong>Sobre o fit:</strong> o IIR Sales Agent foi construído para operações
+          com volume relevante de leads. Se durante o diagnóstico ficar claro que o
+          seu momento ainda não justifica o projeto, dizemos isso na mesma conversa.
+        </p>
+      </aside>
+
+      <div class="reveal" data-d="1">
+        <div class="form-card">
+          <div id="formWrap">
+            <div class="form-card__head">
+              <h3 class="form-card__title">Solicitar diagnóstico gratuito</h3>
+              <p class="form-card__sub">Leva menos de um minuto. Ao enviar, você fala direto com nosso time no WhatsApp.</p>
+            </div>
+
+            <form id="leadForm" novalidate>
+              <div class="field" id="f-nome">
+                <label class="field__label" for="nome">Nome completo <span class="req">*</span></label>
+                <input type="text" id="nome" name="nome" placeholder="Como devemos te chamar" autocomplete="name">
+                <span class="field__error">Informe seu nome completo.</span>
+              </div>
+
+              <div class="form-row">
+                <div class="field" id="f-empresa">
+                  <label class="field__label" for="empresa">Empresa <span class="req">*</span></label>
+                  <input type="text" id="empresa" name="empresa" placeholder="Nome da empresa" autocomplete="organization">
+                  <span class="field__error">Informe o nome da empresa.</span>
+                </div>
+
+                <div class="field" id="f-cargo">
+                  <label class="field__label" for="cargo">Cargo / função <span class="req">*</span></label>
+                  <input type="text" id="cargo" name="cargo" placeholder="Diretor, gestor, CEO..." autocomplete="organization-title">
+                  <span class="field__error">Informe seu cargo na empresa.</span>
+                </div>
+              </div>
+
+              <div class="field" id="f-whatsapp">
+                <label class="field__label" for="whatsapp">WhatsApp <span class="req">*</span></label>
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="(11) 91234-5678" inputmode="numeric" autocomplete="tel-national" maxlength="15">
+                <span class="field__error">Informe um número de WhatsApp válido com DDD.</span>
+              </div>
+
+              <div class="field" id="f-volume">
+                <label class="field__label" for="volume">Volume de leads ou atendimentos por mês <span class="req">*</span></label>
+                <select id="volume" name="volume" data-placeholder="true">
+                  <option value="" disabled selected>Selecione a faixa aproximada</option>
+                  <option value="Até 200 por mês">Até 200 por mês</option>
+                  <option value="De 200 a 500 por mês">De 200 a 500 por mês</option>
+                  <option value="De 500 a 1.500 por mês">De 500 a 1.500 por mês</option>
+                  <option value="Mais de 1.500 por mês">Mais de 1.500 por mês</option>
+                </select>
+                <span class="field__hint">Usamos essa faixa para definir o formato da implementação</span>
+                <span class="field__error">Selecione a faixa de volume mensal.</span>
+              </div>
+
+              <!-- ===== Campos ocultos de atribuição de campanha ===== -->
+              <input type="hidden" name="utm_source"   id="utm_source">
+              <input type="hidden" name="utm_medium"   id="utm_medium">
+              <input type="hidden" name="utm_campaign" id="utm_campaign">
+              <input type="hidden" name="utm_content"  id="utm_content">
+              <input type="hidden" name="utm_term"     id="utm_term">
+              <input type="hidden" name="fbclid"       id="fbclid">
+              <input type="hidden" name="gclid"        id="gclid">
+              <input type="hidden" name="page_url"     id="page_url">
+              <input type="hidden" name="referrer"     id="referrer">
+
+              <div class="form-card__footer">
+                <button type="submit" class="btn btn--primary btn--lg btn--block" data-magnetic>
+                  <span class="btn__inner">
+                    Solicitar meu diagnóstico
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.24 8.24c0 4.54-3.7 8.23-8.24 8.23z"/></svg>
+                  </span>
+                </button>
+                <p class="form-legal">
+                  Seus dados são usados apenas para o contato comercial deste diagnóstico.
+                  Nada de disparo em massa.
+                </p>
+              </div>
+            </form>
+          </div>
+
+          <div class="form-success" id="formSuccess" role="status" aria-live="polite">
+            <div class="form-success__icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2ED9A3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h3 class="form-success__title">Pedido registrado</h3>
+            <p class="form-success__text">
+              Abrimos o WhatsApp com sua mensagem já preenchida. Se a aba não abrir
+              automaticamente, use o botão abaixo.
+            </p>
+            <a href="#" class="btn btn--primary" id="waFallback" target="_blank" rel="noopener">
+              <span class="btn__inner">Abrir conversa no WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="section" id="perguntas">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow eyebrow--center">Perguntas frequentes</span>
+      <h2 class="section-title">O que diretores comerciais costumam perguntar</h2>
+    </div>
+
+    <div class="faq reveal">
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a1" id="q1">
+          Como funciona a implementação na prática?
+          <span class="faq__icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a1" role="region" aria-labelledby="q1">
+          <div class="faq__a-inner">
+            <p>
+              Começa pelo diagnóstico, onde mapeamos seu funil, seus critérios de
+              qualificação e o CRM que você já usa. A partir daí nossa equipe treina
+              o agente com seu catálogo, suas objeções e seu tom de voz, conecta a
+              integração com o CRM e roda uma bateria de testes com conversas reais
+              antes de liberar o número para o público.
+            </p>
+            <p>
+              Você acompanha cada etapa. Não existe momento em que o sistema é
+              entregue para você configurar sozinho.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a2" id="q2">
+          Quem paga os custos de API do WhatsApp e da IA?
+          <span class="faq__icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a2" role="region" aria-labelledby="q2">
+          <div class="faq__a-inner">
+            <p>
+              Os custos de uso da API oficial do WhatsApp Business e dos modelos de
+              IA são cobrados diretamente pelos fornecedores e ficam na conta da sua
+              empresa, no seu nome. Isso mantém a titularidade do número e dos dados
+              com você, o que importa se um dia a parceria terminar.
+            </p>
+            <p>
+              No diagnóstico apresentamos a projeção desses custos com base no seu
+              volume mensal, para que não exista surpresa depois.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a3" id="q3">
+          Quanto tempo até o agente entrar em operação?
+          <span class="faq__icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a3" role="region" aria-labelledby="q3">
+          <div class="faq__a-inner">
+            <p>
+              A média fica entre três e cinco semanas do aceite até o agente atendendo
+              lead real. O que mais influencia esse prazo é a velocidade de acesso ao
+              CRM e a disponibilidade do seu time comercial nas sessões de calibragem.
+            </p>
+            <p>
+              Operações com processo bem documentado costumam entrar antes. Operações
+              com vários funis e times regionais levam um pouco mais.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a4" id="q4">
+          O que está incluso na manutenção contínua?
+          <span class="faq__icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a4" role="region" aria-labelledby="q4">
+          <div class="faq__a-inner">
+            <p>
+              Monitoramento da operação, revisão periódica de conversas reais,
+              ajuste dos critérios de qualificação conforme seu funil muda,
+              atualização do agente quando você lança produto ou muda política
+              comercial, e suporte para o time em canal direto.
+            </p>
+            <p>
+              Um agente de vendas envelhece junto com a operação. A manutenção existe
+              para que ele continue vendendo como o seu melhor vendedor venderia hoje,
+              não como vendia no dia da implantação.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq__item">
+        <button class="faq__q" aria-expanded="false" aria-controls="a5" id="q5">
+          Meu cliente vai perceber que está falando com uma IA?
+          <span class="faq__icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq__a" id="a5" role="region" aria-labelledby="q5">
+          <div class="faq__a-inner">
+            <p>
+              O agente conversa no tom que a sua marca usa, com tempo de resposta
+              natural e sem linguagem robotizada. Ainda assim, defendemos
+              transparência: a identificação do atendimento automatizado é definida
+              com você na implementação e costuma ter efeito neutro ou positivo na
+              conversão quando a experiência é boa.
+            </p>
+            <p>
+              O que o cliente percebe de fato é que foi atendido rápido e que a pessoa
+              do outro lado sabia do que estava falando.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA FINAL ================= -->
+<section class="section final" style="background:var(--color-bg-surface);border-top:1px solid var(--color-border-subtle);">
+  <div class="final__bg" aria-hidden="true"></div>
+  <div class="orb" aria-hidden="true"></div>
+  <div class="container">
+    <div class="final__inner">
+
+      <div class="slots reveal">
+        <span class="slots__label">Implementações por mês</span>
+        <span class="slots__dots" aria-hidden="true">
+          <span class="slots__dot"></span><span class="slots__dot"></span>
+          <span class="slots__dot"></span><span class="slots__dot is-open"></span>
+        </span>
+        <span class="slots__count">1 vaga aberta</span>
+      </div>
+
+      <h2 class="final__title reveal" data-d="1">
+        Cada semana sem resposta rápida<br>
+        <span class="accent">é receita que já foi paga e não voltou</span>
+      </h2>
+
+      <p class="final__text reveal" data-d="2">
+        Trabalhamos com um número limitado de implementações simultâneas porque cada
+        agente é treinado à mão pela nossa equipe. Quando as vagas do mês fecham, a
+        próxima janela abre no mês seguinte.
+      </p>
+
+      <div class="reveal" data-d="3">
+        <a href="#diagnostico" class="btn btn--primary btn--lg" data-magnetic data-scroll>
+          <span class="btn__inner">
+            Solicitar diagnóstico gratuito
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <div class="guarantee reveal" data-d="4">
+        <div class="guarantee__seal">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2DDCEB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div>
+          <div class="guarantee__title">Garantia de satisfação nos primeiros 30 dias</div>
+          <p class="guarantee__text">
+            Se nos primeiros 30 dias de operação o agente não atender ao padrão de
+            qualidade combinado no diagnóstico, seguimos ajustando sem custo adicional
+            até que atenda, ou encerramos o projeto e devolvemos o valor da implementação.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <a href="#topo" class="logo" aria-label="IIR Sales Agent">
+          <svg class="logo__mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="7" stroke="url(#lg)" stroke-width="1.5"/>
+            <path d="M7 22L13 15L19 18.5L25.5 9.5" stroke="url(#lg)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="7" cy="22" r="2.2" fill="#2DDCEB"/><circle cx="13" cy="15" r="2.2" fill="#2DDCEB"/>
+            <circle cx="19" cy="18.5" r="2.2" fill="#1296D4"/><circle cx="25.5" cy="9.5" r="2.2" fill="#1296D4"/>
+          </svg>
+          <span class="logo__text">
+            <span class="logo__name">IIR Sales Agent</span>
+            <span class="logo__sub">por IIR Labs</span>
+          </span>
+        </a>
+        <p class="footer__about">
+          Sistemas inteligentes para crescimento de negócios. Agentes de IA,
+          automação e engenharia de dados aplicados à operação comercial.
+        </p>
+        <p class="footer__pillars">IA • Automação • Dados</p>
+      </div>
+
+      <div>
+        <p class="footer__title">Navegação</p>
+        <ul class="footer__list">
+          <li><a href="#problema" data-scroll>O gargalo</a></li>
+          <li><a href="#operacao" data-scroll>Como opera</a></li>
+          <li><a href="#capacidades" data-scroll>Capacidades</a></li>
+          <li><a href="#perguntas" data-scroll>Perguntas frequentes</a></li>
+          <li><a href="#diagnostico" data-scroll>Solicitar diagnóstico</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer__title">Contato</p>
+        <ul class="footer__list">
+          <li><a href="https://wa.me/5579981714807" target="_blank" rel="noopener">WhatsApp comercial</a></li>
+          <li><span>IIR Labs Tecnologia Ltda</span></li>
+          <li><span>Atendimento em todo o Brasil</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© <span id="ano">2026</span> IIR Labs Tecnologia Ltda. Todos os direitos reservados.</span>
+      <span>IIR Sales Agent é um serviço de implementação, não um software de autoatendimento.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ======================================================================
+     1. CAPTURA DE UTMs, fbclid e gclid
+     Guarda em memória, em sessionStorage (sobrevive à navegação interna)
+     e nos campos hidden do formulário — para atribuição mesmo depois
+     do redirecionamento para o WhatsApp.
+     ====================================================================== */
+  var TRACK_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','gclid'];
+  var tracking = {};
+
+  (function captureTracking(){
+    var params = new URLSearchParams(window.location.search);
+    var stored = {};
+    try { stored = JSON.parse(sessionStorage.getItem('iir_tracking') || '{}'); } catch(e){ stored = {}; }
+
+    TRACK_KEYS.forEach(function(key){
+      var fromUrl = params.get(key);
+      tracking[key] = fromUrl || stored[key] || '';
+    });
+
+    tracking.page_url = window.location.href;
+    tracking.referrer = document.referrer || '';
+
+    try { sessionStorage.setItem('iir_tracking', JSON.stringify(tracking)); } catch(e){}
+
+    // espelha nos campos hidden
+    Object.keys(tracking).forEach(function(key){
+      var input = document.getElementById(key);
+      if (input) input.value = tracking[key];
+    });
+
+    // exposto para debug/integrações externas
+    window.IIR_TRACKING = tracking;
+  })();
+
+  /* ======================================================================
+     2. NAV — estado sticky, menu mobile e smooth scroll com offset
+     ====================================================================== */
+  var nav = document.getElementById('nav');
+  var navToggle = document.getElementById('navToggle');
+  var navMobile = document.getElementById('navMobile');
+
+  var onScroll = function(){
+    if (window.scrollY > 12) nav.classList.add('is-stuck');
+    else nav.classList.remove('is-stuck');
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive:true });
+
+  function closeMobile(){
+    navToggle.setAttribute('aria-expanded','false');
+    navMobile.classList.remove('is-open');
+  }
+  navToggle.addEventListener('click', function(){
+    var open = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!open));
+    navMobile.classList.toggle('is-open', !open);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(function(link){
+    link.addEventListener('click', function(ev){
+      var id = link.getAttribute('href');
+      if (id === '#' || id.length < 2) return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      ev.preventDefault();
+      closeMobile();
+      var top = target.getBoundingClientRect().top + window.scrollY - 76;
+      window.scrollTo({ top: top, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  });
+
+  /* ======================================================================
+     3. REVEAL ON SCROLL
+     ====================================================================== */
+  var revealables = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var revealObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    revealables.forEach(function(el){ revealObserver.observe(el); });
+  } else {
+    revealables.forEach(function(el){ el.classList.add('is-revealed'); });
+  }
+
+  /* ======================================================================
+     4. CONTADORES ANIMADOS (rAF, formatação pt-BR)
+     ====================================================================== */
+  function animateCount(el){
+    var target  = parseFloat(el.getAttribute('data-count'));
+    var decimals = parseInt(el.getAttribute('data-dec') || '0', 10);
+    var duration = 1500;
+    var start = null;
+
+    function frame(ts){
+      if (start === null) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);      // ease-out cubic
+      var value = target * eased;
+      el.textContent = value.toLocaleString('pt-BR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+      if (progress < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  var counters = document.querySelectorAll('[data-count]');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var countObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          animateCount(entry.target);
+          countObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(function(el){ countObserver.observe(el); });
+  } else {
+    counters.forEach(function(el){
+      var d = parseInt(el.getAttribute('data-dec') || '0', 10);
+      el.textContent = parseFloat(el.getAttribute('data-count'))
+        .toLocaleString('pt-BR', { minimumFractionDigits:d, maximumFractionDigits:d });
+    });
+  }
+
+  /* ======================================================================
+     5. BOTÕES MAGNÉTICOS (sutis — o DS pede motion contida)
+     ====================================================================== */
+  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('[data-magnetic]').forEach(function(btn){
+      var inner = btn.querySelector('.btn__inner');
+      var raf = null, tx = 0, ty = 0, ix = 0, iy = 0;
+
+      function apply(){
+        btn.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0)';
+        if (inner) inner.style.transform = 'translate3d(' + ix + 'px,' + iy + 'px,0)';
+        raf = null;
+      }
+      function schedule(){ if (raf === null) raf = requestAnimationFrame(apply); }
+
+      btn.addEventListener('mousemove', function(ev){
+        var r = btn.getBoundingClientRect();
+        var dx = ev.clientX - (r.left + r.width / 2);
+        var dy = ev.clientY - (r.top + r.height / 2);
+        tx = dx * 0.16; ty = dy * 0.22;
+        ix = dx * 0.06; iy = dy * 0.08;
+        schedule();
+      });
+      btn.addEventListener('mouseleave', function(){
+        tx = ty = ix = iy = 0;
+        btn.style.transition = 'transform var(--duration-slow) var(--ease-standard), filter var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard)';
+        schedule();
+        setTimeout(function(){ btn.style.transition = ''; }, 340);
+      });
+      btn.addEventListener('mouseenter', function(){
+        btn.style.transition = 'filter var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard)';
+      });
+    });
+  }
+
+  /* ======================================================================
+     6. MOCKUP DE WHATSAPP — conversa mensagem a mensagem, em loop
+     ====================================================================== */
+  var chatBody = document.getElementById('chatBody');
+  var crmToast = document.getElementById('crmToast');
+
+  var SCRIPT_CHAT = [
+    { side:'in',  text:'Oi, vi o anúncio de vocês. Preciso de orçamento pra 12 unidades da linha industrial.', time:'19:47' },
+    { side:'out', text:'Boa noite, Renata. Consigo te ajudar agora mesmo. Essas 12 unidades são para uma planta só ou distribuídas?', time:'19:47', typing:1100 },
+    { side:'in',  text:'Duas plantas, uma em Joinville e outra em Curitiba.', time:'19:48' },
+    { side:'out', text:'Perfeito. E a previsão de compra é para este mês ou vocês estão levantando orçamento pro próximo trimestre?', time:'19:48', typing:1000 },
+    { side:'in',  text:'Este mês. Já temos verba aprovada.', time:'19:49' },
+    { side:'out', text:'Ótimo. Já reservei as unidades e passei seu caso para o Carlos, consultor da região Sul. Ele te chama amanhã às 9h com a proposta fechada. Pode ser?', time:'19:49', typing:1300, crm:true }
+  ];
+
+  function renderChat(){
+    if (!chatBody) return;
+    chatBody.innerHTML = '';
+    if (crmToast) crmToast.classList.remove('is-in');
+
+    if (reduceMotion) {
+      SCRIPT_CHAT.forEach(function(item){ chatBody.appendChild(buildMessage(item, true)); });
+      if (crmToast) crmToast.classList.add('is-in');
+      return;
+    }
+
+    var delay = 500;
+    SCRIPT_CHAT.forEach(function(item){
+      if (item.typing) {
+        (function(d, dur){
+          setTimeout(function(){
+            var t = document.createElement('div');
+            t.className = 'typing';
+            t.innerHTML = '<span></span><span></span><span></span>';
+            chatBody.appendChild(t);
+            requestAnimationFrame(function(){ t.classList.add('is-in'); });
+            setTimeout(function(){ t.remove(); }, dur);
+          }, d);
+        })(delay, item.typing);
+        delay += item.typing;
+      }
+
+      (function(d, data){
+        setTimeout(function(){
+          var el = buildMessage(data, false);
+          chatBody.appendChild(el);
+          requestAnimationFrame(function(){ el.classList.add('is-in'); });
+          trimChat();
+          if (data.crm && crmToast) {
+            setTimeout(function(){ crmToast.classList.add('is-in'); }, 600);
+          }
+        }, d);
+      })(delay, item);
+
+      delay += 1500;
+    });
+
+    // reinicia o ciclo
+    setTimeout(renderChat, delay + 4200);
+  }
+
+  function buildMessage(item, instant){
+    var el = document.createElement('div');
+    el.className = 'msg msg--' + item.side + (instant ? ' is-in' : '');
+    el.innerHTML = escapeHtml(item.text) + '<span class="msg__meta">' + item.time + (item.side === 'out' ? ' • agente' : '') + '</span>';
+    return el;
+  }
+
+  // mantém a altura estável removendo mensagens que saíram da área visível
+  function trimChat(){
+    while (chatBody.scrollHeight > chatBody.clientHeight && chatBody.firstElementChild) {
+      chatBody.removeChild(chatBody.firstElementChild);
+    }
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  // só começa quando o mockup entra em tela
+  var phoneMock = document.getElementById('phoneMock');
+  if (phoneMock && 'IntersectionObserver' in window) {
+    var chatObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) { renderChat(); chatObserver.unobserve(entry.target); }
+      });
+    }, { threshold: 0.25 });
+    chatObserver.observe(phoneMock);
+  } else {
+    renderChat();
+  }
+
+  /* ======================================================================
+     7. MOCKUP DE SCORE — preenche as barras quando entra em tela
+     ====================================================================== */
+  var scoreMock = document.getElementById('scoreMock');
+  if (scoreMock && 'IntersectionObserver' in window) {
+    var scoreObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          scoreObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    scoreObserver.observe(scoreMock);
+  } else if (scoreMock) {
+    scoreMock.classList.add('is-revealed');
+  }
+
+  /* ======================================================================
+     8. FAQ ACCORDION
+     ====================================================================== */
+  document.querySelectorAll('.faq__q').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      var isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+      // fecha os demais
+      document.querySelectorAll('.faq__q').forEach(function(other){
+        if (other !== btn) {
+          other.setAttribute('aria-expanded','false');
+          var p = document.getElementById(other.getAttribute('aria-controls'));
+          if (p) p.classList.remove('is-open');
+        }
+      });
+
+      btn.setAttribute('aria-expanded', String(!isOpen));
+      panel.classList.toggle('is-open', !isOpen);
+    });
+  });
+
+  /* ======================================================================
+     9. FORMULÁRIO — máscara, validação, eventos de conversão e WhatsApp
+     ====================================================================== */
+  var WHATSAPP_NUMBER = '5579981714807';
+
+  var form        = document.getElementById('leadForm');
+  var formWrap    = document.getElementById('formWrap');
+  var formSuccess = document.getElementById('formSuccess');
+  var waFallback  = document.getElementById('waFallback');
+  var phoneInput  = document.getElementById('whatsapp');
+  var volumeSel   = document.getElementById('volume');
+
+  /* --- máscara de telefone brasileiro: (11) 91234-5678 --- */
+  function maskPhone(value){
+    var d = value.replace(/\D/g, '').slice(0, 11);
+    if (d.length === 0) return '';
+    if (d.length <= 2)  return '(' + d;
+    if (d.length <= 6)  return '(' + d.slice(0,2) + ') ' + d.slice(2);
+    if (d.length <= 10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
+    return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+  }
+  phoneInput.addEventListener('input', function(){
+    var before = phoneInput.value.length;
+    phoneInput.value = maskPhone(phoneInput.value);
+    if (phoneInput.value.length !== before) clearError(phoneInput);
+  });
+
+  /* --- o select muda de cor quando deixa de ser placeholder --- */
+  volumeSel.addEventListener('change', function(){
+    volumeSel.setAttribute('data-placeholder', volumeSel.value ? 'false' : 'true');
+    clearError(volumeSel);
+  });
+
+  function fieldOf(input){ return input.closest('.field'); }
+  function setError(input){ var f = fieldOf(input); if (f) f.classList.add('has-error'); }
+  function clearError(input){ var f = fieldOf(input); if (f) f.classList.remove('has-error'); }
+
+  var VALIDATORS = {
+    nome: function(v){ return v.trim().length >= 3 && v.trim().indexOf(' ') > 0; },
+    empresa: function(v){ return v.trim().length >= 2; },
+    cargo: function(v){ return v.trim().length >= 2; },
+    whatsapp: function(v){
+      var d = v.replace(/\D/g,'');
+      // 10 dígitos (fixo com DDD) ou 11 dígitos (celular com 9)
+      if (d.length !== 10 && d.length !== 11) return false;
+      if (parseInt(d.slice(0,2), 10) < 11) return false;          // DDD válido
+      if (d.length === 11 && d.charAt(2) !== '9') return false;    // celular começa com 9
+      return true;
+    },
+    volume: function(v){ return v.trim().length > 0; }
+  };
+
+  // limpa o erro assim que o usuário corrige
+  ['nome','empresa','cargo'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener('input', function(){ if (VALIDATORS[id](el.value)) clearError(el); });
+  });
+
+  function validateForm(){
+    var firstInvalid = null;
+    Object.keys(VALIDATORS).forEach(function(id){
+      var el = document.getElementById(id);
+      if (!VALIDATORS[id](el.value)) {
+        setError(el);
+        if (!firstInvalid) firstInvalid = el;
+      } else {
+        clearError(el);
+      }
+    });
+    return firstInvalid;
+  }
+
+  /* --- monta a mensagem legível para o WhatsApp --- */
+  function buildWhatsappMessage(data){
+    var lines = [
+      'Olá! Quero solicitar o diagnóstico gratuito do IIR Sales Agent.',
+      '',
+      '*Nome:* ' + data.nome,
+      '*Empresa:* ' + data.empresa,
+      '*Cargo:* ' + data.cargo,
+      '*WhatsApp:* ' + data.whatsapp,
+      '*Volume mensal de leads/atendimentos:* ' + data.volume
+    ];
+
+    var origem = [];
+    if (tracking.utm_source)   origem.push('Origem: ' + tracking.utm_source);
+    if (tracking.utm_medium)   origem.push('Mídia: ' + tracking.utm_medium);
+    if (tracking.utm_campaign) origem.push('Campanha: ' + tracking.utm_campaign);
+    if (tracking.utm_content)  origem.push('Conteúdo: ' + tracking.utm_content);
+    if (tracking.utm_term)     origem.push('Termo: ' + tracking.utm_term);
+
+    if (origem.length) {
+      lines.push('', '---', origem.join(' | '));
+    }
+
+    return lines.join('\n');
+  }
+
+  /* --- eventos de conversão --------------------------------------------
+     Todos os disparos reais estão comentados. Descomente depois de
+     inserir os IDs reais do Meta Pixel / Google Ads no <head>.
+     -------------------------------------------------------------------- */
+  function fireConversionEvents(data){
+
+    var payload = {
+      content_name: 'Diagnostico IIR Sales Agent',
+      content_category: 'lead_qualificado',
+      volume_leads: data.volume,          // faixa de volume: principal filtro de fit
+      cargo: data.cargo,                  // dado não sensível
+      utm_source: tracking.utm_source,
+      utm_medium: tracking.utm_medium,
+      utm_campaign: tracking.utm_campaign,
+      utm_content: tracking.utm_content,
+      utm_term: tracking.utm_term
+    };
+
+    // ---------- META PIXEL ----------
+    // Descomente após configurar o fbq no <head>.
+    /*
+    if (typeof fbq === 'function') {
+      fbq('track', 'Lead', payload);
+    }
+    */
+
+    // ---------- GOOGLE ADS (gtag) ----------
+    // Substitua AW-XXXXXXXXX/YYYYYYYYYYY pelo par ID de conversão / rótulo.
+    /*
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to: 'AW-XXXXXXXXX/YYYYYYYYYYY',   // <<<<<< CONVERSÃO DO GOOGLE ADS AQUI
+        value: 1.0,
+        currency: 'BRL',
+        transaction_id: 'lead_' + Date.now()
+      });
+
+      // Evento GA4 opcional, para relatórios
+      gtag('event', 'generate_lead', payload);
+    }
+    */
+
+    // ---------- GOOGLE TAG MANAGER (dataLayer) ----------
+    // Este fica ativo por padrão: sem GTM instalado ele apenas empilha
+    // o objeto num array e não causa erro algum.
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'form_submit_iir_sales_agent',
+      form_name: 'diagnostico_qualificacao',
+      lead_volume: data.volume,
+      lead_cargo: data.cargo,
+      lead_empresa: data.empresa,
+      utm_source: tracking.utm_source,
+      utm_medium: tracking.utm_medium,
+      utm_campaign: tracking.utm_campaign,
+      utm_content: tracking.utm_content,
+      utm_term: tracking.utm_term,
+      fbclid: tracking.fbclid,
+      gclid: tracking.gclid,
+      page_url: tracking.page_url,
+      referrer: tracking.referrer
+    });
+  }
+
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+
+    var firstInvalid = validateForm();
+    if (firstInvalid) {
+      firstInvalid.focus();
+      firstInvalid.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+      return;
+    }
+
+    var data = {
+      nome:     document.getElementById('nome').value.trim(),
+      empresa:  document.getElementById('empresa').value.trim(),
+      cargo:    document.getElementById('cargo').value.trim(),
+      whatsapp: document.getElementById('whatsapp').value.trim(),
+      volume:   document.getElementById('volume').value
+    };
+
+    // 1. dispara os eventos de conversão
+    fireConversionEvents(data);
+
+    // 2. monta a mensagem e a URL do WhatsApp
+    var message = buildWhatsappMessage(data);
+    var waUrl = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message);
+
+    // 3. redireciona em nova aba (com fallback visível caso o popup seja bloqueado)
+    waFallback.setAttribute('href', waUrl);
+    var win = window.open(waUrl, '_blank', 'noopener');
+
+    formWrap.style.display = 'none';
+    formSuccess.classList.add('is-visible');
+    formSuccess.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+
+    if (!win) waFallback.focus();
+  });
+
+  /* ======================================================================
+     10. Ano no rodapé
+     ====================================================================== */
+  document.getElementById('ano').textContent = new Date().getFullYear();
+
+})();
+</script>
+</body>
+</html>

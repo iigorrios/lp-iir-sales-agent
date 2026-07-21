@@ -1,0 +1,14 @@
+# Design system interno — biblioteca compartilhada, mantida fora deste repositório.
+# Contém contexto estratégico da IIR Labs e não é necessária para servir a página
+# (index.html é autocontido: CSS e JS inline, fontes via Google Fonts CDN).
+IIR Labs Design System 2.0/
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
+*.swp
