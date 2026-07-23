@@ -913,10 +913,25 @@ body::after{
 .reveal[data-d="3"]{transition-delay:240ms;}
 .reveal[data-d="4"]{transition-delay:320ms;}
 
+/* variantes direcionais de reveal — a chegada é sempre para transform:none,
+   então basta variar o ponto de partida. .is-revealed já zera tudo. */
+.js .reveal--left{transform:translateX(-34px);}
+.js .reveal--right{transform:translateX(34px);}
+.js .reveal--scale{transform:scale(.93);}
+.js .reveal--blur{filter:blur(12px);
+  transition:opacity 620ms var(--ease-standard),transform 620ms var(--ease-standard),filter 620ms var(--ease-standard);}
+.js .reveal--blur.is-revealed{filter:none;}
+
+/* parallax de fundo — usa a propriedade CSS `translate`, independente de
+   `transform`, para não conflitar com o posicionamento/tilt já existentes.
+   O JS só escreve em element.style.translate. */
+[data-parallax]{will-change:translate;}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
-  .js .reveal{opacity:1;transform:none;}
+  .js .reveal{opacity:1;transform:none;filter:none;}
+  [data-parallax]{translate:none !important;}
   .msg,.typing{opacity:1;transform:none;}
   .float-card--reveal{opacity:1;transform:translateZ(46px);}
   .phone{transform:none !important;}
@@ -983,8 +998,8 @@ body::after{
 <!-- ================= HERO ================= -->
 <section class="hero">
   <div class="hero__bg" aria-hidden="true"></div>
-  <div class="orb orb--a" aria-hidden="true"></div>
-  <div class="orb orb--b" aria-hidden="true"></div>
+  <div class="orb orb--a" aria-hidden="true" data-parallax="0.30"></div>
+  <div class="orb orb--b" aria-hidden="true" data-parallax="-0.22"></div>
 
   <div class="container">
     <div class="hero__inner">
@@ -1002,8 +1017,8 @@ body::after{
 
         <p class="hero__lead reveal" data-d="2">
           Atende, qualifica e organiza cada lead do seu WhatsApp em um CRM próprio,
-          e entrega ao vendedor só o que já está pronto para fechar. Mesmo padrão às
-          3h da manhã e no pico da segunda-feira, com o time que você já tem.
+          e entrega ao vendedor só o que já está pronto para fechar. No mesmo padrão
+          24 horas por dia, 7 dias por semana, com o time que você já tem.
         </p>
 
         <div class="hero__actions reveal" data-d="3">
@@ -1024,7 +1039,7 @@ body::after{
         </p>
       </div>
 
-      <div class="hero__media reveal" data-d="2">
+      <div class="hero__media reveal reveal--right" data-d="2">
         <div class="phone-stage" id="phoneStage">
           <div class="phone" id="phoneMock">
             <span class="phone__notch" aria-hidden="true"></span>
@@ -1129,16 +1144,16 @@ body::after{
   <div class="container">
     <div class="proof__stats reveal">
       <div class="stat">
-        <div class="stat__value"><span class="u">R$</span> <span data-count="4.2" data-dec="1">0</span> <span class="u">mi</span></div>
-        <div class="stat__label">em oportunidades recuperadas</div>
+        <div class="stat__value"><span class="u">+R$</span> <span data-count="90">0</span> <span class="u">mil</span></div>
+        <div class="stat__label">em vendas já realizadas</div>
       </div>
       <div class="stat">
-        <div class="stat__value">+<span data-count="32">0</span><span class="u">%</span></div>
-        <div class="stat__label">na taxa média de resposta</div>
+        <div class="stat__value"><span data-count="10">0</span><span class="u">%</span></div>
+        <div class="stat__label">de taxa de conversão média</div>
       </div>
       <div class="stat">
-        <div class="stat__value"><span data-count="41">0</span><span class="u">s</span></div>
-        <div class="stat__label">tempo médio de primeira resposta</div>
+        <div class="stat__value"><span class="u">&lt;</span> <span data-count="2">0</span> <span class="u">min</span></div>
+        <div class="stat__label">para responder cada lead</div>
       </div>
     </div>
   </div>
@@ -1157,9 +1172,9 @@ body::after{
       </p>
     </div>
 
-    <div class="pains">
+    <div class="pains" data-stagger>
       <article class="pain reveal" data-d="1">
-        <span class="pain__num">DOR 01</span>
+        <span class="pain__num">GARGALO 01</span>
         <h3 class="pain__title">O lead esfria enquanto espera</h3>
         <p class="pain__text">
           Uma mensagem que chega às 19h de sexta é respondida na segunda de manhã.
@@ -1170,7 +1185,7 @@ body::after{
       </article>
 
       <article class="pain reveal" data-d="2">
-        <span class="pain__num">DOR 02</span>
+        <span class="pain__num">GARGALO 02</span>
         <h3 class="pain__title">Cada atendente vende de um jeito</h3>
         <p class="pain__text">
           Um faz as perguntas certas, outro pula direto para o orçamento, um terceiro
@@ -1181,7 +1196,7 @@ body::after{
       </article>
 
       <article class="pain reveal" data-d="3">
-        <span class="pain__num">DOR 03</span>
+        <span class="pain__num">GARGALO 03</span>
         <h3 class="pain__title">Escalar significa contratar de novo</h3>
         <p class="pain__text">
           Dobrar o volume de leads exige mais gente, mais treinamento, mais
@@ -1213,7 +1228,7 @@ body::after{
       </p>
     </div>
 
-    <div class="steps">
+    <div class="steps" data-stagger>
       <article class="step reveal" data-d="1">
         <div class="step__dot">01</div>
         <h3 class="step__title">Diagnóstico comercial</h3>
@@ -1273,7 +1288,7 @@ body::after{
 
     <!-- FEATURE 1 -->
     <article class="feature">
-      <div class="feature__copy reveal">
+      <div class="feature__copy reveal reveal--left">
         <span class="eyebrow">01 — CRM próprio incluso</span>
         <h3 class="feature__title">Um CRM que já nasce preenchido pelo agente</h3>
         <p class="feature__text">
@@ -1288,7 +1303,7 @@ body::after{
           <li>Integração opcional para empurrar o lead qualificado ao seu CRM atual</li>
         </ul>
       </div>
-      <div class="feature__media reveal" data-d="1">
+      <div class="feature__media reveal reveal--right" data-d="1">
         <div class="ui">
           <div class="ui__bar">
             <span class="ui__dot"></span><span class="ui__dot"></span><span class="ui__dot"></span>
@@ -1327,7 +1342,7 @@ body::after{
 
     <!-- FEATURE 2 -->
     <article class="feature feature--flip">
-      <div class="feature__copy reveal">
+      <div class="feature__copy reveal reveal--right">
         <span class="eyebrow">02 — Qualificação</span>
         <h3 class="feature__title">Seu vendedor só fala com quem tem chance de comprar</h3>
         <p class="feature__text">
@@ -1341,7 +1356,7 @@ body::after{
           <li>Descarte respeitoso, sem queimar a marca com quem ainda não é hora</li>
         </ul>
       </div>
-      <div class="feature__media reveal" data-d="1">
+      <div class="feature__media reveal reveal--left" data-d="1">
         <div class="ui">
           <div class="ui__bar">
             <span class="ui__dot"></span><span class="ui__dot"></span><span class="ui__dot"></span>
@@ -1379,7 +1394,7 @@ body::after{
 
     <!-- FEATURE 3 -->
     <article class="feature">
-      <div class="feature__copy reveal">
+      <div class="feature__copy reveal reveal--left">
         <span class="eyebrow">03 — Handoff humano</span>
         <h3 class="feature__title">A IA sabe a hora exata de sair da conversa</h3>
         <p class="feature__text">
@@ -1393,7 +1408,7 @@ body::after{
           <li>Escalonamento por horário, carteira ou especialidade</li>
         </ul>
       </div>
-      <div class="feature__media reveal" data-d="1">
+      <div class="feature__media reveal reveal--right" data-d="1">
         <div class="ui">
           <div class="ui__bar">
             <span class="ui__dot"></span><span class="ui__dot"></span><span class="ui__dot"></span>
@@ -1426,7 +1441,7 @@ body::after{
       </p>
     </div>
 
-    <div class="quotes">
+    <div class="quotes" data-stagger>
       <article class="quote reveal" data-d="1">
         <div class="quote__metric">3.400 → 3.400</div>
         <div class="quote__metric-label">Mesmo volume de leads, 2 vendedores a menos</div>
@@ -1483,11 +1498,11 @@ body::after{
 
 <!-- ================= FORMULÁRIO ================= -->
 <section class="section form-section" id="diagnostico">
-  <div class="orb" aria-hidden="true"></div>
+  <div class="orb" aria-hidden="true" data-parallax="0.18"></div>
   <div class="container">
     <div class="form-grid">
 
-      <aside class="form-aside reveal">
+      <aside class="form-aside reveal reveal--left">
         <span class="eyebrow">Diagnóstico comercial</span>
         <h2 class="form-aside__title">Antes de propor qualquer coisa, a gente olha a sua operação</h2>
         <p class="form-aside__text">
@@ -1518,7 +1533,7 @@ body::after{
         </p>
       </aside>
 
-      <div class="reveal" data-d="1">
+      <div class="reveal reveal--right" data-d="1">
         <div class="form-card">
           <div id="formWrap">
             <div class="form-card__head">
@@ -1620,8 +1635,8 @@ body::after{
       <h2 class="section-title">O que diretores comerciais costumam perguntar</h2>
     </div>
 
-    <div class="faq reveal">
-      <div class="faq__item">
+    <div class="faq" data-stagger>
+      <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false" aria-controls="a1" id="q1">
           Como funciona a implementação na prática?
           <span class="faq__icon" aria-hidden="true"></span>
@@ -1643,7 +1658,7 @@ body::after{
         </div>
       </div>
 
-      <div class="faq__item">
+      <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false" aria-controls="a2" id="q2">
           Quem paga os custos de API do WhatsApp e da IA?
           <span class="faq__icon" aria-hidden="true"></span>
@@ -1664,7 +1679,7 @@ body::after{
         </div>
       </div>
 
-      <div class="faq__item">
+      <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false" aria-controls="a3" id="q3">
           Quanto tempo até o agente entrar em operação?
           <span class="faq__icon" aria-hidden="true"></span>
@@ -1685,7 +1700,7 @@ body::after{
         </div>
       </div>
 
-      <div class="faq__item">
+      <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false" aria-controls="a4" id="q4">
           O que está incluso na manutenção contínua?
           <span class="faq__icon" aria-hidden="true"></span>
@@ -1707,7 +1722,7 @@ body::after{
         </div>
       </div>
 
-      <div class="faq__item">
+      <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false" aria-controls="a6" id="q6">
           Preciso trocar o CRM que a minha empresa já usa?
           <span class="faq__icon" aria-hidden="true"></span>
@@ -1730,7 +1745,7 @@ body::after{
         </div>
       </div>
 
-      <div class="faq__item">
+      <div class="faq__item reveal">
         <button class="faq__q" aria-expanded="false" aria-controls="a5" id="q5">
           Meu cliente vai perceber que está falando com uma IA?
           <span class="faq__icon" aria-hidden="true"></span>
@@ -1758,7 +1773,7 @@ body::after{
 <!-- ================= CTA FINAL ================= -->
 <section class="section final" style="background:var(--color-bg-surface);border-top:1px solid var(--color-border-subtle);">
   <div class="final__bg" aria-hidden="true"></div>
-  <div class="orb" aria-hidden="true"></div>
+  <div class="orb" aria-hidden="true" data-parallax="0.18"></div>
   <div class="container">
     <div class="final__inner">
 
@@ -1941,8 +1956,19 @@ body::after{
   });
 
   /* ======================================================================
-     3. REVEAL ON SCROLL
+     3. REVEAL ON SCROLL (+ stagger automático em grids)
+     Containers com [data-stagger] recebem delays incrementais nos filhos
+     .reveal, criando a cascata independentemente da quantidade de itens.
+     O delay inline sobrescreve qualquer data-d anterior.
      ====================================================================== */
+  var STAGGER_STEP = 90; // ms entre itens
+  document.querySelectorAll('[data-stagger]').forEach(function(group){
+    var items = group.querySelectorAll(':scope > .reveal');
+    items.forEach(function(item, i){
+      item.style.transitionDelay = (i * STAGGER_STEP) + 'ms';
+    });
+  });
+
   var revealables = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduceMotion) {
     var revealObserver = new IntersectionObserver(function(entries){
@@ -1957,6 +1983,43 @@ body::after{
   } else {
     revealables.forEach(function(el){ el.classList.add('is-revealed'); });
   }
+
+  /* ======================================================================
+     3.1 PARALLAX DE FUNDO
+     Move elementos [data-parallax] em relação ao scroll usando a propriedade
+     CSS `translate` (independente de `transform`, então não conflita com o
+     posicionamento/tilt já existentes). Throttle via requestAnimationFrame.
+     ====================================================================== */
+  (function parallax(){
+    if (reduceMotion) return;
+    var items = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+    if (!items.length) return;
+
+    var vh = window.innerHeight;
+    var ticking = false;
+
+    function update(){
+      ticking = false;
+      var mid = window.scrollY + vh / 2;
+      for (var i = 0; i < items.length; i++) {
+        var el = items[i];
+        var rect = el.getBoundingClientRect();
+        // ignora o que está bem longe da viewport (perf)
+        if (rect.bottom < -vh || rect.top > vh * 2) continue;
+        var elCenter = rect.top + window.scrollY + rect.height / 2;
+        var speed = parseFloat(el.getAttribute('data-parallax')) || 0;
+        // Mantém o efeito visível, mas evita deslocamentos excessivos em telas altas.
+        var y = Math.max(-96, Math.min(96, (elCenter - mid) * speed));
+        el.style.translate = '0 ' + y.toFixed(1) + 'px';
+      }
+    }
+    function onScroll(){
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', function(){ vh = window.innerHeight; onScroll(); }, { passive: true });
+    update();
+  })();
 
   /* ======================================================================
      4. CONTADORES ANIMADOS (rAF, formatação pt-BR)
@@ -2221,6 +2284,7 @@ body::after{
      9. FORMULÁRIO — máscara, validação, eventos de conversão e WhatsApp
      ====================================================================== */
   var WHATSAPP_NUMBER = '5579981714807';
+  var WEBHOOK_URL     = 'https://n8n.srv1202786.hstgr.cloud/webhook/lp-iir-sales-agent';
 
   var form        = document.getElementById('leadForm');
   var formWrap    = document.getElementById('formWrap');
@@ -2379,6 +2443,47 @@ body::after{
     });
   }
 
+  /* --- envia o lead para o n8n (webhook) -------------------------------
+     Payload completo: dados do formulário + toda a atribuição de campanha
+     (UTMs, fbclid, gclid, page_url, referrer). Usa keepalive para o envio
+     sobreviver mesmo com a abertura do WhatsApp em nova aba.
+     -------------------------------------------------------------------- */
+  function sendToWebhook(data){
+    var digits = data.whatsapp.replace(/\D/g, '');
+    var payload = {
+      // dados do formulário
+      nome:        data.nome,
+      empresa:     data.empresa,
+      cargo:       data.cargo,
+      whatsapp:    data.whatsapp,                 // formatado: (11) 91234-5678
+      whatsapp_e164: '55' + digits,              // pronto para discagem / API
+      volume:      data.volume,
+      // atribuição de campanha
+      utm_source:   tracking.utm_source,
+      utm_medium:   tracking.utm_medium,
+      utm_campaign: tracking.utm_campaign,
+      utm_content:  tracking.utm_content,
+      utm_term:     tracking.utm_term,
+      fbclid:       tracking.fbclid,
+      gclid:        tracking.gclid,
+      // contexto
+      page_url:    tracking.page_url,
+      referrer:    tracking.referrer,
+      submitted_at: new Date().toISOString(),
+      user_agent:  navigator.userAgent
+    };
+
+    try {
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true,
+        mode: 'cors'
+      }).catch(function(){ /* falha de rede não bloqueia o fluxo do usuário */ });
+    } catch(e){ /* nunca interrompe o envio do formulário */ }
+  }
+
   form.addEventListener('submit', function(ev){
     ev.preventDefault();
 
@@ -2399,6 +2504,9 @@ body::after{
 
     // 1. dispara os eventos de conversão
     fireConversionEvents(data);
+
+    // 1.1 envia o lead para o n8n (Supabase + automações)
+    sendToWebhook(data);
 
     // 2. monta a mensagem e a URL do WhatsApp
     var message = buildWhatsappMessage(data);
